@@ -2,7 +2,7 @@
 @import url("/css/antiscreen.css") only screen and (max-device-width:480px);
 
 a { 
-  color: #999562;
+  color: #bb8844;
 }
 
 body {
@@ -13,9 +13,19 @@ body {
 }
 
 h1 {
-  color: #99425E;
+  color: #445588;
   font-family: Georgia;
   font-weight: 100;
 }
 
 li { list-style-type: none; }
+
+code  { 
+  font-family: "menlo", "monaco", "courier new";
+  font-size: 14px;
+}
+
+.posts {
+  
+  
+}
