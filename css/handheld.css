@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  background: #fff;
+  padding: 12px;
+  font-size: 2em;
+  line-height: 1.5em;
+}
+h1 {
+  padding: 0;
+}
+
+p {
+  text-align: justify;
+}
+
+li {
+  list-style-type: none;
+  font-size: 3em;
+  font-family: Georgia;
+}
+span {
+  display: block;
+  font-size: .5em;
+  color: #555;
+}

@@ -1,0 +1,21 @@
+@import url("/css/antiscreen.css") handheld; 
+@import url("/css/antiscreen.css") only screen and (max-device-width:480px);
+
+a { 
+  color: #999562;
+}
+
+body {
+  margin: 0 auto;
+  padding: 2em;
+  width: 970px;
+  font-family: "Helvetica";
+}
+
+h1 {
+  color: #99425E;
+  font-family: Georgia;
+  font-weight: 100;
+}
+
+li { list-style-type: none; }
