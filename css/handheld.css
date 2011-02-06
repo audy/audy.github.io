@@ -2,21 +2,22 @@ body {
   margin: 0;
   background: #fff;
   padding: 12px;
-  font-size: 2em;
-  line-height: 1.5em;
+  font-size: 2.5em;
+  width: auto;
 }
 h1 {
   padding: 0;
 }
-
 p {
   text-align: justify;
+  line-height: 1.5em;
 }
-
 li {
   list-style-type: none;
-  font-size: 3em;
   font-family: Georgia;
+}
+code {
+  line-height: 1em;
 }
 .posts span {
   display: block;
