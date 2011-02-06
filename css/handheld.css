@@ -18,7 +18,7 @@ li {
   font-size: 3em;
   font-family: Georgia;
 }
-span {
+.postlist span {
   display: block;
   font-size: .5em;
   color: #555;
