@@ -1,14 +1,19 @@
 @import url("/css/antiscreen.css") handheld; 
 @import url("/css/antiscreen.css") only screen and (max-device-width:480px);
-
+.gradient {
+  background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#fff));
+  z-index: 0;
+  height: 100px;
+}
+.container {  width: 620px;  margin: 0 auto; z-index: 1;}
 a { 
   color: #bb8844;
 }
 p { text-align: justify;}
 body {
-  margin: 0 auto;
-  padding: 2em;
-  width: 720px;
+
+  padding: 0;
+  margin: 0;
   font-family: "Helvetica";
 }
 
@@ -16,14 +21,17 @@ h1 {
   color: #445588;
   font-family: Georgia;
   font-weight: 100;
+  margin: 0;
 }
 
-h2 {
+h2, h3 {
   font-weight: 100;
   color: #333;
 }
 
-li { list-style-type: none; }
+.posts span { color: #000; }
+
+li { list-style-type: none;}
 
 code  { 
   font-family: "menlo", "monaco", "courier new";
