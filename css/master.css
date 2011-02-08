@@ -1,7 +1,7 @@
 @import url("/css/antiscreen.css") handheld; 
 @import url("/css/antiscreen.css") only screen and (max-device-width:480px);
 
-html { overflow-y: scroll; }
+html { overflow-y: scroll; git }
 
 .gradient {
   background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#fff));
@@ -17,14 +17,14 @@ body {
 
   padding: 0;
   margin: 0;
-  font-family: "Helvetica";
+  font-family: sans-serif;
 }
 
 h1 {
   color: #445588;
   font-family: Georgia;
   font-weight: 100;
-  margin: 0;
+
 }
 
 h2, h3 {
@@ -32,10 +32,8 @@ h2, h3 {
   color: #333;
 }
 
-.posts span { color: #000; }
-
 code  { 
-  font-family: "menlo", "monaco", "courier new";
+  font-family: "menlo", "courier new";
   font-size: 14px;
 }
 

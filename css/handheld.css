@@ -1,8 +1,8 @@
 .container {
-  font-size: 2.5em;
   width: auto;
   padding: 12px;
 }
+code { font-size: 12px; }
 .gradient {
   display: none;
 }
