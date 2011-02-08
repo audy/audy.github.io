@@ -1,5 +1,8 @@
 @import url("/css/antiscreen.css") handheld; 
 @import url("/css/antiscreen.css") only screen and (max-device-width:480px);
+
+html { overflow-y: scroll; }
+
 .gradient {
   background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#fff));
   z-index: 0;
@@ -30,8 +33,6 @@ h2, h3 {
 }
 
 .posts span { color: #000; }
-
-li { list-style-type: none;}
 
 code  { 
   font-family: "menlo", "monaco", "courier new";
