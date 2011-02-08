@@ -1,11 +1,63 @@
-@import url("/css/antiscreen.css") handheld;@import url("/css/antiscreen.css") only screen and (max-device-width:480px);html{overflow-y:scroll;}
-.gradient{background:-webkit-gradient(linear,left top,left bottom,from(#D1DFD6),to(#fff));z-index:0;height:100px;}
-.container{width:620px;margin:0 auto;z-index:1;}
-a{color:#bb8844;}
-p{text-align:justify;}
-body{padding:0;margin:0;font-family:sans-serif;}
-h1{color:#445588;font-family:Georgia;font-weight:100;}
-h2,h3{font-weight:100;color:#333;}
-code{font-family:"menlo","courier new";font-size:14px;}
-::-moz-selection{background:#D1DFD6;color:#000;text-shadow:none;}
-::selection{background:#D1DFD6;color:#000;text-shadow:none;}
+@import url("/css/antiscreen.css") handheld;@import url("/css/antiscreen.css") only screen and (max-device-width:480px);
+html {
+  overflow-y: scroll;
+}
+.gradient {
+  background: -webkit-gradient(linear,left top,left bottom,from(#F5F5F5),to(#fff));
+  z-index: 0;
+  height: 100px;
+}
+.container {
+  width: 620px;
+  margin: 0 auto;
+  z-index: 1;
+}
+a {
+  color: #bb8844;
+}
+p {
+  text-align: justify;
+}
+body {
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+}
+h1 {
+  color: #445588;
+  font-weight: 100;
+  font-family: Georgia;
+  font-weight: 100;
+}
+
+h2, h3 {
+  color: #666;
+  font-weight: 400;
+}
+code {
+  font-family: Menlo, Courier New, Courier, Mono, monospace;
+  font-size: 14px;
+}
+::-moz-selection {
+  background: #D1DFD6;
+  color: #000;
+  text-shadow: none;
+}
+::selection {
+  background: #D1DFD6;
+  color: #000;
+  text-shadow: none;
+}
+.about { 
+  color: #999;
+  font-family: Georgia;
+  font-size: 1.173em;
+}
+.about a { 
+  font-style: italic;
+}
+.posts {
+  font-size: 1.173em;
+  margin-top: 1em;
+  color: #444;
+}
