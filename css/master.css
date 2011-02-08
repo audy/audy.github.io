@@ -4,7 +4,7 @@
 html { overflow-y: scroll; git }
 
 .gradient {
-  background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#fff));
+  background: -webkit-gradient(linear, left top, left bottom, from(#D1DFD6), to(#fff));
   z-index: 0;
   height: 100px;
 }
@@ -37,4 +37,5 @@ code  {
   font-size: 14px;
 }
 
-.posts { }
+::-moz-selection{ background:#D1DFD6; color:#000; text-shadow: none; }
+::selection { background:#D1DFD6; color:#000; text-shadow: none; }
