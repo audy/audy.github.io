@@ -5,4 +5,4 @@ h1{padding:0;font-size:1.8em;}
 p{text-align:justify;line-height:1.5em;}
 li{list-style-type:none;font-family:Georgia;}
 code{line-height:1em;}
-.posts span{display:block;font-size:.5em;color:#555;}
+.posts span{display:block;font-size:.5em;color:#555;font-size: 1em!important; color: #fff!important;}

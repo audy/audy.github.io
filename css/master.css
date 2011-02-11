@@ -29,7 +29,6 @@ h1 {
   font-family: Georgia;
   font-weight: 100;
 }
-
 h2, h3 {
   color: #666;
   font-weight: 400;
@@ -51,7 +50,6 @@ code {
 .about { 
   color: #999;
   font-family: Georgia;
-  font-size: 1.173em;
 }
 .about a { 
   font-style: italic;
@@ -61,3 +59,17 @@ code {
   margin-top: 1em;
   color: #444;
 }
+.about, .posts { font-size: 1.173em; }
+.posts span {
+  background: #444;
+  width: auto;
+  padding: 6px;
+  margin-left: -2.5em;
+  color: #fff;
+  border-radius: 6px;
+  font-size: .9em;
+  vertical-align: center;
+  font-family: Georgia;
+}
+.posts li { list-style-type: none; }
+.post_link a { color: #eee; text-decoration: none;}
