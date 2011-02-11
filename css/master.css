@@ -67,6 +67,7 @@ code {
   margin-left: -2.5em;
   color: #fff;
   border-radius: 6px;
+  -moz-border-radius: 6px;
   font-size: .9em;
   vertical-align: center;
   font-family: Georgia;
