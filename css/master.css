@@ -75,3 +75,16 @@ code {
 }
 .posts li { list-style-type: none; }
 .post_link a { color: #eee; text-decoration: none;}
+
+.days_box {
+  background:transparent;
+  font-size: 3em;
+  margin: 0;
+  padding: 0;
+}
+.days {
+  font-weight: 100;
+  margin: 0;
+  padding: 0;
+  font-size: 3em;
+}

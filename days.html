@@ -11,9 +11,14 @@ CountActive = true;
 CountStepper = -1;
 LeadingZero = true;
 DisplayFormat = "%%D%% Days";
-FinishMessage = "It is finally here!";
+FinishMessage = "";
 </script>
 
 <div class="top" style="text-align:right;">
-  <span style="font-family:helvetica; color:#000; font-size: 3em; font-weight:100; "><span style="font-size:3em;"> <script language="JavaScript" src="http://scripts.hashemian.com/js/countdown.js"></script></span><br> {{ page.subtitle }}
+    <div class="days">
+    <div class="days_box">
+      <script language="JavaScript" src="http://scripts.hashemian.com/js/countdown.js"></script>
+    </div>
+    {{ page.subtitle }}
+  </div>
 </div>
