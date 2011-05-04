@@ -61,29 +61,28 @@ code {
   color: #444;
 }
 .post img {
-  border: 6px solid #fff;
-  box-shadow: 0px 0px 3px #666;
+  padding: 6px;
+  box-shadow: 0px 0px 3px #333;
+  background: -webkit-gradient(linear,left top,left bottom,from(#ddd),to(#dedede));
   margin-left: 2em;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
 .about, .posts { font-size: 1.173em; }
 .posts span {
   background: #444;
   width: auto;
   padding: 6px;
-  margin-left: -2em;
   line-height: 2em;
   color: #fff;
   border-radius: 6px;
   -moz-border-radius: 6px;
-  font-size: .9em;
   vertical-align: center;
   font-family: Georgia;
 }
-.posts li { list-style-type: none; }
-.post_link a { color: #eee; text-decoration: none;}
-
+/*.posts a { color: #008080;}*/
 .days_box {
-  background:transparent;
+  background: transparent;
   font-size: 3em;
   margin: 0;
   padding: 0;
