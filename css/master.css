@@ -60,6 +60,11 @@ code {
   margin-top: 1em;
   color: #444;
 }
+.post img {
+  border: 6px solid #fff;
+  box-shadow: 0px 0px 3px #666;
+  margin-left: 2em;
+}
 .about, .posts { font-size: 1.173em; }
 .posts span {
   background: #444;
