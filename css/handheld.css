@@ -39,5 +39,7 @@ li {
   border: none;
   box-shadow: none;
   margin-left: 0;
+  border: none;
+  padding: none;
   width: 100%;
 }
