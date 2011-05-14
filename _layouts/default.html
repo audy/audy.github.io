@@ -20,22 +20,10 @@
 </head>
 <body lang="en">
 
-  <div class="gradient">&nbsp;</div>  
-  <div class="container">
-    <div class="content">
-      {{ content }}
-    </div>
-    <div class="bottom">
-    </div>
-  </div>
-
-
-  <!-- Google Analytics -->
-  <script>
-  var _gaq=[['_setAccount','UA-12735432-3'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-  </script>
+  <div class="gradient">&nbsp;</div>
+  
+	{{ content }}
+	
+	{% include analytics.html %}
 </body>
 </html>
