@@ -61,12 +61,11 @@ h2, h3 {
   color: #444;
 }
 .post img {
-  padding: 6px;
-  box-shadow: 0px 0px 3px #333;
+  box-shadow: 0px 0px 5px #333;
+  border: 2px solid #000;
   background: -webkit-gradient(linear,left top,left bottom,from(#ddd),to(#dedede));
-  margin-left: 2em;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .about, .posts {
   font-size: 1.173em;
