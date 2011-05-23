@@ -6,7 +6,7 @@ comments: true
 ---
 ## Searching DNA databases using Zlib
 
-I read an something somewhere that described a simple data mining technique that used compression to search a data set for strings _similar_ to a given query string. I can't find that article now but I always wanted to try it. The method works by comparing the size of the compressed versions of the strings to the size of the strings if they are compressed together.
+I read something somewhere that described a simple data mining technique that used compression to search a data set for strings _similar_ to a given query string. I can't find that article now but I always wanted to try it. The method works by comparing the size of the compressed versions of the strings to the size of the strings if they are compressed together.
 
 For example, if you want to compare two strings to see if they are similar, first compress them separately and get the length of the compressed strings:
 
