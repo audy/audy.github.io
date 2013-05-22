@@ -1,21 +1,20 @@
 ---
 layout: default
-title: Hey, Audy! 
-subtitle: (Austin G. Davis-Richardson)
+title: Austin G. Davis-Richardson
 ---
 <div class="container">
-	<div class="content">
-		<div class="top">
-			<h1>
-				{{ page.title }} <span class="subtitle">{{ page.subtitle }}</span>
-			</h1>
-		</div>
-		<div class="about">
-      <a href="http://scholar.google.com/citations?user=xw0mHYEAAAAJ&hl=en">Scientist</a>, <a href="http://www.github.com/audy">Programmer</a>, and Composer of <a href="http://www.twitter.com/heyaudy">Tweets</a>
-		</div>
-		<div class="posts">
-			{% for post in site.posts %} <span><a href="{{post.url}}">{{ post.title }}</a> {{ post.date | date_to_long_string }}</span><br>
-			{% endfor %}
-		</div>
-	</div>
+  <div class="content">
+    <div class="top">
+      <h1>
+        <span class="title">{{ page.title }}</span>
+      </h1>
+    </div>
+    <div class="about">
+      <a href="http://scholar.google.com/citations?user=xw0mHYEAAAAJ&hl=en">Scholar</a>, <a href="http://www.github.com/audy">Github</a>, &amp; <a href="http://www.twitter.com/heyaudy">Twitter</a>.
+    </div>
+    <div class="posts">
+      {% for post in site.posts %} <span><a href="{{post.url}}">{{ post.title }}</a> {{ post.date | date_to_long_string }}</span><br>
+      {% endfor %}
+    </div>
+  </div>
 </div>
