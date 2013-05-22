@@ -2,18 +2,18 @@
 layout: default
 ---
 <div class="container">
-	<div class="content">
-		<span class="about"><a href="/">back</a></span>
-		<div class="top">
-			<h1>
-				{{ page.title }}
-			</h1>
-		</div>
-		<div class="post">
-			{{ content }}
-		</div>
-	</div>
+  <div class="content">
+    <span class="about"><a href="/">back</a></span>
+    <div class="top">
+      <h1>
+        {{ page.title }}
+      </h1>
+    </div>
+    <div class="post">
+      {{ content }}
+    </div>
+  </div>
 </div>
 <p>
-	{% include disqus.html %}
+  {% include disqus.html %}
 </p>
