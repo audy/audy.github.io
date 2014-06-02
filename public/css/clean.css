@@ -105,6 +105,10 @@ ul li a:hover {
 }
 
 @media screen and (min-width: 740px) {
+
+  body {
+    margin-top: 60px;
+  }
 	
 	.title {
 		font-size: 4.5vw;
