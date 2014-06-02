@@ -57,7 +57,6 @@ nav {
 	line-height: 1.75;
 	font-family: 'Open Sans Condensed', sans-serif;
 	font-size: 4.4vw;
-	margin-top: -3%;
 }
 
 nav ul {
@@ -67,7 +66,7 @@ nav ul {
 
 
 ul li a {
-	color: #B8B8B8;
+	color: #909090;
 	text-decoration: none;
 }
 
@@ -76,7 +75,7 @@ ul li a:hover {
 }
 
 
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 540px) {
 
 	.title {
 		font-size: 5vw;
@@ -104,7 +103,7 @@ ul li a:hover {
 	}
 }
 
-@media screen and (min-width: 740px) {
+@media screen and (min-width: 830px) {
 
   body {
     margin-top: 60px;
@@ -128,7 +127,7 @@ ul li a:hover {
 	}
 
 	nav ul li {
-		font-size: 1.5vw;
+		font-size: 2.2vw;
 	}
 
 }
