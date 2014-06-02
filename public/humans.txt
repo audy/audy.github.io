@@ -1,5 +1,11 @@
-# design
-Agne J. Klimaite (agnesklimaite@gmail.com)
+/* TEAM */
 
-# portrait
-Sinbad Richardson (sinbadr@gmail.com)
+Agne J. Klimaite
+Email: agnesklimaite@gmail.com
+Title: Web Designer
+Location: Vienna, Berlin, Gainesville FL
+
+Sinbad Richardson
+Email: sinbadr@gmail.com
+Title: Portrait Artist
+Location: Montreal
