@@ -10,19 +10,20 @@ I read something somewhere that described a simple data mining technique that us
 
 For example, if you want to compare two strings to see if they are similar, first compress them separately and get the length of the compressed strings:
 
-~~~ ruby
+{% highlight ruby %}
 >> compress("Austin")
 => 9
 >> compress("Boston")
 => 8
-~~~
+{% endhighlight %}
 
 Now compress them together:
 
-~~~ ruby
+{% highlight ruby %}
 >> compress("AustinBoston")
 => 12
-~~~
+{% endhighlight %}
+
 
 12 is still more than 9 but less than 17 (the sum of separately compressed sizes). So the strings must be similar.
 

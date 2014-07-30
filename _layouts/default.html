@@ -1,29 +1,20 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <title>{{ page.title }}</title>
-
-  <meta name="description" content="A blog">
+  <link href='http://fonts.googleapis.com/css?family=Dosis:300|Open+Sans:300,600|Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+  <link href="hover-master/css/hover-min.css" rel="stylesheet" media="all">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/clean.css">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0">
   <meta name="author" content="Austin G. Davis-Richardson">
-
-  <link rel="stylesheet" href="/css/master.css">
-
-  <link rel="stylesheet" href="/css/handheld.css" media="handheld,
-    only screen and (max-device-width:480px)">
-
-  <link rel="stylesheet" href="/css/syntax.css" media="screen">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-</head>
+</head>  
 <body lang="en">
 
-  <div class="gradient">&nbsp;</div>
+  <div class="wrapper">
+    {{ content }}
+  </div>
 
-  {{ content }}
-
-  {% include analytics.html %}
 </body>
 </html>
