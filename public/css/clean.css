@@ -1,0 +1,208 @@
+/****************************************************************
+GENERAL
+****************************************************************/
+body {
+  max-width: 100%;
+}
+.wrapper {
+  display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+   display: flex;
+
+  height: 100%;
+  margin: auto;
+
+  flex-flow: column;
+  -webkit-flex-flow: column;
+  -moz-flex-flow: column;
+  -ms-flex-flow: column;
+
+  justify-content: space-around;
+  -webkit-justify-content: space-around;
+  -moz-justify-content: space-around;
+  -ms-justify-content: space-around;
+  
+}
+
+
+/****************************************************************
+LOGO
+****************************************************************/
+
+
+div img {
+  order: 1;
+  -webkit-order: 1;
+  -moz-order: 1;
+  -ms-order: 1;
+
+  height: 220px;
+}
+
+
+/****************************************************************
+TITLE
+****************************************************************/
+
+.title {
+  order: 2;
+  -webkit-order: 2;
+  -moz-order: 2;
+  -ms-order: 2;
+
+
+  font-family: 'Dosis', sans-serif;
+  font-weight: 300;
+  color: #585858;
+  font-size: 5.6vw;
+  text-align: center;
+  margin: auto;
+}
+
+.title:hover span {
+  display: none;
+}
+
+.title:hover:before {
+  content:"Austin G. Davis Richardson";
+  color: tomato;
+}
+
+
+/****************************************************************
+NAVIGATION
+****************************************************************/
+
+nav {
+  order: 3;
+  -webkit-order: 3;
+  -moz-order: 3;
+  -ms-order: 3;
+
+  line-height: 1.75;
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 4.4vw;
+}
+
+nav ul {
+  padding: 0;
+  text-align: center;
+}
+
+
+ul li a {
+  color: #909090;
+  text-decoration: none;
+}
+
+ul li a:hover {
+  color: tomato;
+}
+
+
+@media screen and (min-width: 540px) {
+
+  .title {
+    font-size: 5vw;
+  }
+
+  nav {
+    display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+
+    justify-content: center;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    -ms-justify-content: center;
+  }
+
+  nav ul {
+    width: 350px;
+    
+    display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -moz-flex-direction: row;
+    -ms-flex-direction: row;
+
+    flex-flow: row wrap;
+    -webkit-flex-flow: row wrap;
+    -moz-flex-flow: row wrap;
+    -ms-flex-flow: row wrap;
+
+    justify-content: space-around;
+      -webkit-justify-content: space-around;
+      -moz-justify-content: space-around;
+      -ms-justify-content: space-around;
+  }
+
+  nav ul li {
+    font-size: 3.2vw;
+  }
+
+  .dot {
+    color: #B8B8B8;
+  }
+}
+
+@media screen and (min-width: 830px) {
+
+  body {
+    margin-top: 60px;
+  }
+  
+  .title {
+    font-size: 4.5vw;
+  }
+
+  nav {
+    display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+
+    
+    justify-content: center;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    -ms-justify-content: center;
+  }
+
+  nav ul {
+    width: 450px;
+    
+    display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -moz-flex-direction: row;
+    -ms-flex-direction: row;
+
+    flex-flow: row wrap;
+    -webkit-flex-flow: row wrap;
+    -moz-flex-flow: row wrap;
+    -ms-flex-flow: row wrap;
+    
+    justify-content: space-around;
+      -webkit-justify-content: space-around;
+      -moz-justify-content: space-around;
+      -ms-justify-content: space-around;
+  }
+
+  nav ul li {
+    font-size: 2.2vw;
+  }
+
+}
+
