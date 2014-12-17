@@ -1,0 +1,63 @@
+==================================================================
+https://keybase.io/audy
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://agdr.co
+  * I am audy (https://keybase.io/audy) on keybase.
+  * I have a public key with fingerprint ECAA 9A28 758A BB1F 77CD  2299 6707 68C1 407B E56C
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "ecaa9a28758abb1f77cd2299670768c1407be56c",
+            "host": "keybase.io",
+            "key_id": "670768c1407be56c",
+            "uid": "473cbb69ac5891fc74d6bf1d44d77a00",
+            "username": "audy"
+        },
+        "service": {
+            "hostname": "agdr.co",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1418826224,
+    "expire_in": 157680000,
+    "prev": "2396c726d6a6b78bc5e820733b48c6f179c90bbc409e1cac0144672041383c26",
+    "seqno": 8,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG/MacGPG2 v2
+
+owFtUVtIFFEY3t1MWy9YKdmDUcyTmMrM7MycmZXNKCWUBLU0urnNOXN2d1Bn1tnR
+3HQhxdIt0kwoKbqQPnjpRkb0INVCD3npqUAUoigKRUsiiYJuZyTfOi8/5/u/y//z
+n09ZY3PY/QmB2M7mD7X2yafz0La/50JcMwV1JUy5m6kavFJ8qubHRtBQNZNyUxjJ
+siSzIuBFGULGBwBSWFaSBEADQUQMRwOIeQFROVRAD1kKYgPlEM5TdYKRj1dVCPof
+fsNKgwMuBKEgyYgXJcaHAKcI0McoHKcAINO0RQxhQ5PrMGHLDWTWSA5FkEYVYWte
+K3a161eMPGTlBg3d1JFeS8CAaQbdlsYMBy3ScQy9/+ReqGoKWZcIGrERUnWNcjOE
+iUzV8mM4RhRZgWW5HAo3BVUDe1WLwZNNaPKsGNxILFmXJCDACoogCxCIEPFYZGng
+ckFORIKPARKSaAgRR0uYQTKiGY4TAEtzjEt0IVagrIXqNZ1yi2RM2U8sQ6pfk80G
+A1ORxKg9M85md9ji1zqsi9kSnetX71han/CnaG7faNnt5VTH94G9w0vqWAyHiw9k
+pW7gSxfdg4EvYvf7tJ65J+2ZNcnR4i1nzDFQGu2314hqR35fxcSmLqn8ykclq/Bu
+U/qt3/c6qt/uufEziTkXi9yv2l308OyxyZJdbWXpWdmekd7hbUWpanv3cnyfh66U
+Fx4tLs60dOifYgXO8OHL8/yPhJKrsXeV+RdjS583r/OMVyaNDgmdbfyriWraL9+p
+EKdObW16ceRNbcHUyIPCrmvFL+ezvw4u9M9uby3PePZLjG8ZomfSnI+rbjqvp7dK
+dcs7hk+Odx48errvxMbpaOZrjxbJ7S3Ik5KF3JRL/qrp2UPsTMbzbwN/AQ==
+=gBh3
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/audy
+
+==================================================================
