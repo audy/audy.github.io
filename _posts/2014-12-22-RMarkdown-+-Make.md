@@ -1,5 +1,5 @@
 ---
-title: Rmarkdown + Make
+title: RMarkdown + Make
 date: 2014-12-22
 tags: R science Make programming reproducibility
 layout: post
