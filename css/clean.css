@@ -132,3 +132,31 @@ ul li a:hover {
 
 }
 
+/****************************************************************
+FOOTER
+****************************************************************/
+
+footer {
+  color: #B8B8B8;
+  margin: 12px;
+}
+
+footer a {
+  color: tomato;
+}
+
+@media screen and (min-width: 540px) {
+  footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+
+@media screen and (max-width: 540px) {
+  footer {
+    text-align: center;
+    bottom: 0;
+  }
+}
