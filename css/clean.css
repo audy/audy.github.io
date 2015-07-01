@@ -6,9 +6,16 @@ body {
 }
 .wrapper {
 	display: -webkit-flex;
+	display:flex;
 	height: 100%;
 	-webkit-flex-flow: column;
+	-moz-box-flow:column;
+	flex-flow:column;
+
 	-webkit-justify-content: space-around;
+	-moz-box-justify-content:space-around;
+	justify-content:space-around;
+
 	margin: auto;
 }
 
@@ -20,6 +27,8 @@ LOGO
 
 div img {
 	-webkit-order: 1;
+	-ms-flex-order:1;
+	-moz-box-ordinal-group:1;
 	height: 220px;
 }
 
@@ -30,6 +39,8 @@ TITLE
 
 .title {
 	-webkit-order: 2;
+	-ms-flex-order:2;
+	-moz-box-ordinal-group:2;
 	font-family: 'Dosis', sans-serif;
 	font-weight: 300;
 	color: #585858;
@@ -54,6 +65,8 @@ NAVIGATION
 
 nav {
 	-webkit-order: 3;
+	-ms-flex-order:3;
+	-moz-box-ordinal-group:3;
 	line-height: 1.75;
 	font-family: 'Open Sans Condensed', sans-serif;
 	font-size: 4.4vw;
@@ -83,15 +96,29 @@ ul li a:hover {
 
 	nav {
 		display: -webkit-flex;
+		display:flex;
 		-webkit-justify-content: center;
+		-moz-box-justify-content:center;
+		justify-content:center;
 	}
 
 	nav ul {
 		width: 350px;
+
 		display: -webkit-flex;
+		display:flex;
+
 		-webkit-flex-direction: row;
+		-moz-box-flex-direction:row;
+		flex-direction:row;
+
 		-webkit-flex-flow: row wrap;
+		-moz-box-flex-flow: row wrap;
+		flex-flow: row wrap;
+
   		-webkit-justify-content: space-around;
+  		-moz-box-justify-content:space-around;
+  		justify-content:space-around;
 	}
 
 	nav ul li {
@@ -116,14 +143,22 @@ ul li a:hover {
 	nav {
 		display: -webkit-flex;
 		-webkit-justify-content: center;
+		-moz-box-justify-content:center;
+		justify-content:center;
 	}
 
 	nav ul {
 		width: 450px;
 		display: -webkit-flex;
 		-webkit-flex-direction: row;
+		-moz-box-flex-direction:row;
+		flex-direction:row;
 		-webkit-flex-flow: row wrap;
+		-moz-box-flex-flow:row wrap;
+		flex-flow:row wrap;
 		-webkit-justify-content: space-around;
+		-moz-box-justify-content:space-around;
+		justify-content:space-around;
 	}
 
 	nav ul li {
