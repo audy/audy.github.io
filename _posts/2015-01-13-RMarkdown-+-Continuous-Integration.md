@@ -3,6 +3,15 @@ title: RMarkdown & Continuous Integration
 layout: post
 ---
 
+I've been playing around with using continuous integration for scientific
+analysis using [Travis-CI](https://travis-ci.com), RMarkdown and GitHub. This
+way, whenever I perform a `git push` to GitHub, Travis-CI will pull down the
+latest code and run it. Since in this case, the "code" consists of RMarkdown
+files containing my analyses, Travis-CI will re-run my analyses every time I
+update the code. This can be useful for checking that my code works but, more
+importantly, preserving a record of _how_ to run the analysis code, and
+notifying me when something breaks.
+
 I added continuous integration using [Travis-CI](https://travis-ci.com) to my
 [Make + RMarkdown example](https://github.com/audy/make-rmarkdown). When GitHub
 receives a `git push`, Travis will clone the repository and run `make` which
