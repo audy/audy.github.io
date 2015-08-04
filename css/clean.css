@@ -2,21 +2,21 @@
 GENERAL
 ****************************************************************/
 body {
-	max-width: 100%;
+  font-family: Helvetica;
+  max-width: 100%;
 }
-.wrapper {
-	display: -webkit-flex;
-	display:flex;
-	height: 100%;
-	-webkit-flex-flow: column;
-	-moz-box-flow:column;
-	flex-flow:column;
 
-	-webkit-justify-content: space-around;
-	-moz-box-justify-content:space-around;
-	justify-content:space-around;
-
-	margin: auto;
+.home-wrapper {
+  -moz-box-flow:column;
+  -moz-box-justify-content: space-around;
+  -webkit-flex-flow: column;
+  -webkit-justify-content: space-around;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  justify-content: space-around;
+  margin: auto;
 }
 
 
@@ -24,12 +24,11 @@ body {
 LOGO
 ****************************************************************/
 
-
 div img {
-	-webkit-order: 1;
-	-ms-flex-order:1;
-	-moz-box-ordinal-group:1;
-	height: 220px;
+  -moz-box-ordinal-group: 1;
+  -ms-flex-order: 1;
+  -webkit-order: 1;
+  height: 220px;
 }
 
 
@@ -38,24 +37,24 @@ TITLE
 ****************************************************************/
 
 .title {
-	-webkit-order: 2;
-	-ms-flex-order:2;
-	-moz-box-ordinal-group:2;
-	font-family: 'Dosis', sans-serif;
-	font-weight: 300;
-	color: #585858;
-	font-size: 5.6vw;
-	text-align: center;
-	margin: auto;
+  -moz-box-ordinal-group: 2;
+  -ms-flex-order: 2;
+  -webkit-order: 2;
+  color: #585858;
+  font-family: 'Dosis', sans-serif;
+  font-size: 5.6vw;
+  font-weight: 300;
+  margin: auto;
+  text-align: center;
 }
 
 .title:hover span {
-	display: none;
+  display: none;
 }
 
 .title:hover:before {
-	content:"Austin G. Davis Richardson";
-	color: tomato;
+  color: tomato;
+  content:"Austin G. Davis Richardson";
 }
 
 
@@ -63,107 +62,103 @@ TITLE
 NAVIGATION
 ****************************************************************/
 
-nav {
-	-webkit-order: 3;
-	-ms-flex-order:3;
-	-moz-box-ordinal-group:3;
-	line-height: 1.75;
-	font-family: 'Open Sans Condensed', sans-serif;
-	font-size: 4.4vw;
+.home-wrapper nav {
+  -webkit-order: 3;
+  -ms-flex-order: 3;
+  -moz-box-ordinal-group: 3;
+  line-height: 1.75;
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 4.4vw;
 }
 
-nav ul {
-	padding: 0;
-	text-align: center;
+.home-wrapper  nav ul {
+  padding: 0;
+  text-align: center;
 }
 
 
-ul li a {
-	color: #909090;
-	text-decoration: none;
+.home-wrapper  ul li a {
+  color: #909090;
+  text-decoration: none;
 }
 
-ul li a:hover {
-	color: tomato;
+.home-wrapper  ul li a:hover {
+  color: tomato;
 }
 
 
 @media screen and (min-width: 540px) {
 
-	.title {
-		font-size: 5vw;
-	}
+  .title {
+    font-size: 5vw;
+  }
 
-	nav {
-		display: -webkit-flex;
-		display:flex;
-		-webkit-justify-content: center;
-		-moz-box-justify-content:center;
-		justify-content:center;
-	}
+  .home-wrapper  nav {
+    -moz-box-justify-content: center;
+    -webkit-justify-content: center;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+  }
 
-	nav ul {
-		width: 350px;
+  .home-wrapper nav ul {
+    -moz-box-flex-direction: row;
+    -moz-box-flex-flow: row wrap;
+    -moz-box-justify-content: space-around;
+    -webkit-flex-direction: row;
+    -webkit-flex-flow: row wrap;
+    -webkit-justify-content: space-around;
+    display: -webkit-flex;
+    display:flex;
+    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    width: 350px;
+  }
 
-		display: -webkit-flex;
-		display:flex;
+  .home-wrapper nav ul li {
+    font-size: 3.2vw;
+  }
 
-		-webkit-flex-direction: row;
-		-moz-box-flex-direction:row;
-		flex-direction:row;
-
-		-webkit-flex-flow: row wrap;
-		-moz-box-flex-flow: row wrap;
-		flex-flow: row wrap;
-
-  		-webkit-justify-content: space-around;
-  		-moz-box-justify-content:space-around;
-  		justify-content:space-around;
-	}
-
-	nav ul li {
-		font-size: 3.2vw;
-	}
-
-	.dot {
-		color: #B8B8B8;
-	}
+  .dot {
+    color: #B8B8B8;
+  }
 }
 
 @media screen and (min-width: 830px) {
 
-  body {
+  .home-wrapper {
     margin-top: 60px;
   }
-	
-	.title {
-		font-size: 4.5vw;
-	}
+  
+  .title {
+    font-size: 4.5vw;
+  }
 
-	nav {
-		display: -webkit-flex;
-		-webkit-justify-content: center;
-		-moz-box-justify-content:center;
-		justify-content:center;
-	}
+  .home-wrapper nav {
+    -moz-box-justify-content: center;
+    -webkit-justify-content: center;
+    display: -webkit-flex;
+    justify-content: center;
+  }
 
-	nav ul {
-		width: 450px;
-		display: -webkit-flex;
-		-webkit-flex-direction: row;
-		-moz-box-flex-direction:row;
-		flex-direction:row;
-		-webkit-flex-flow: row wrap;
-		-moz-box-flex-flow:row wrap;
-		flex-flow:row wrap;
-		-webkit-justify-content: space-around;
-		-moz-box-justify-content:space-around;
-		justify-content:space-around;
-	}
+  .home-wrapper nav ul {
+    -moz-box-flex-direction: row;
+    -moz-box-flex-flow: row wrap;
+    -moz-box-justify-content: space-around;
+    -webkit-flex-direction: row;
+    -webkit-flex-flow: row wrap;
+    -webkit-justify-content: space-around;
+    display: -webkit-flex;
+    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    width: 450px;
+  }
 
-	nav ul li {
-		font-size: 2.2vw;
-	}
+  .home-wrapper nav ul li {
+    font-size: 2.2vw;
+  }
 
 }
 
