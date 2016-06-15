@@ -22,6 +22,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
     mercenary (0.3.6)
+    puma (3.2.0)
     rb-fsevent (0.9.7)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
@@ -34,6 +35,7 @@ PLATFORMS
 
 DEPENDENCIES
   jekyll
+  puma
 
 BUNDLED WITH
    1.11.2
