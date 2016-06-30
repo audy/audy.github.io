@@ -7,7 +7,8 @@ Other websites I've made and sometimes maintain in my free time:
 
 - [MailCrow](http://mailcrow.com) - An escrow service for your email identity.
 - [Genome Explorer](http://genomes.austinfanclub.com) - A social
-  network for microbes. Part of my PhD thesis.
+  network for microbes. Part of my PhD thesis. [Source
+  Code](https://github.com/audy/genome-explorer).
 - [Le Painting](http://painting.austinfanclub.com) - Social drawing website
   that lets you "fork" other peoples' drawings and modify them.
 - [tilde.town/~audy](http://tilde.town/~audy) - My presence in the
