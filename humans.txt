@@ -1,3 +1,2 @@
 web: Agnes Klimaite <agnek.com>
 logo: Sinbad Richardson <viennapitts.com>
-blog: Austin Davis-Richardson <agdr.co>
