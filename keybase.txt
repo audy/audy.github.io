@@ -4,55 +4,59 @@ https://keybase.io/audy
 
 I hereby claim:
 
-  * I am an admin of http://agdr.co
+  * I am an admin of http://agdr.org
   * I am audy (https://keybase.io/audy) on keybase.
-  * I have a public key with fingerprint ECAA 9A28 758A BB1F 77CD  2299 6707 68C1 407B E56C
+  * I have a public key with fingerprint DE29 FD1F 177A 9330 5730  AE48 EAD5 C0F6 0FE4 A28B
 
-To claim this, I am signing this object:
+To do so, I am signing this object:
 
 {
     "body": {
         "key": {
-            "fingerprint": "ecaa9a28758abb1f77cd2299670768c1407be56c",
+            "eldest_kid": "01012aa0c8c33991b03b51afdad8ea34a5d6ca277e0440bd3873e253002eaa7a0d6a0a",
+            "fingerprint": "de29fd1f177a93305730ae48ead5c0f60fe4a28b",
             "host": "keybase.io",
-            "key_id": "670768c1407be56c",
+            "key_id": "ead5c0f60fe4a28b",
+            "kid": "01012aa0c8c33991b03b51afdad8ea34a5d6ca277e0440bd3873e253002eaa7a0d6a0a",
             "uid": "473cbb69ac5891fc74d6bf1d44d77a00",
             "username": "audy"
         },
         "service": {
-            "hostname": "agdr.co",
+            "hostname": "agdr.org",
             "protocol": "http:"
         },
         "type": "web_service_binding",
         "version": 1
     },
-    "ctime": 1418826224,
+    "ctime": 1469763737,
     "expire_in": 157680000,
-    "prev": "2396c726d6a6b78bc5e820733b48c6f179c90bbc409e1cac0144672041383c26",
-    "seqno": 8,
+    "prev": "c96638dba671d82d7eb95728229c5e453226e99be30f434e14e6ce86b284a532",
+    "seqno": 31,
     "tag": "signature"
 }
 
-with the aforementioned key, yielding the PGP signature:
+which yields the signature:
 
 -----BEGIN PGP MESSAGE-----
-Version: GnuPG/MacGPG2 v2
+Comment: GPGTools - https://gpgtools.org
 
-owFtUVtIFFEY3t1MWy9YKdmDUcyTmMrM7MycmZXNKCWUBLU0urnNOXN2d1Bn1tnR
-3HQhxdIt0kwoKbqQPnjpRkb0INVCD3npqUAUoigKRUsiiYJuZyTfOi8/5/u/y//z
-n09ZY3PY/QmB2M7mD7X2yafz0La/50JcMwV1JUy5m6kavFJ8qubHRtBQNZNyUxjJ
-siSzIuBFGULGBwBSWFaSBEADQUQMRwOIeQFROVRAD1kKYgPlEM5TdYKRj1dVCPof
-fsNKgwMuBKEgyYgXJcaHAKcI0McoHKcAINO0RQxhQ5PrMGHLDWTWSA5FkEYVYWte
-K3a161eMPGTlBg3d1JFeS8CAaQbdlsYMBy3ScQy9/+ReqGoKWZcIGrERUnWNcjOE
-iUzV8mM4RhRZgWW5HAo3BVUDe1WLwZNNaPKsGNxILFmXJCDACoogCxCIEPFYZGng
-ckFORIKPARKSaAgRR0uYQTKiGY4TAEtzjEt0IVagrIXqNZ1yi2RM2U8sQ6pfk80G
-A1ORxKg9M85md9ji1zqsi9kSnetX71han/CnaG7faNnt5VTH94G9w0vqWAyHiw9k
-pW7gSxfdg4EvYvf7tJ65J+2ZNcnR4i1nzDFQGu2314hqR35fxcSmLqn8ykclq/Bu
-U/qt3/c6qt/uufEziTkXi9yv2l308OyxyZJdbWXpWdmekd7hbUWpanv3cnyfh66U
-Fx4tLs60dOifYgXO8OHL8/yPhJKrsXeV+RdjS583r/OMVyaNDgmdbfyriWraL9+p
-EKdObW16ceRNbcHUyIPCrmvFL+ezvw4u9M9uby3PePZLjG8ZomfSnI+rbjqvp7dK
-dcs7hk+Odx48errvxMbpaOZrjxbJ7S3Ik5KF3JRL/qrp2UPsTMbzbwN/AQ==
-=gBh3
+owGtUltIFUEYPqfTBYXIriAK0VZieZvd2d3ZPcTpJSgq0IpSRDrM7MweV+3scc/R
+NJEepDvRhUrUlJKyyCwwSkEfojqIGGmGT10o7KEsMQtMi6hZybcem5dh/vm+7//+
+j//sYp8n0Ts28nBqyfvWU96Bj8ST3zjUViMQm1YL/hqhlM1erIyyaCxYalHBLwAR
+iBLGwNAMCHVdJAASRcQmxVRjGMpYoaqBJYQYkGVAKNQQZJICAZAYxggDqmKAhUzB
+tMIh5kQcKxzjspRJuklFU0QI6xACBUGAmcwlqWIAUwUmk7GkEU4stqMug5sjOMqy
+LZvX+CM4a+8f+P/su2JWTkbQIETVsaFoumgaSKYqMUUqy5RPAIALjDInjA8wjsYV
+PNDaTIFXKi2DuaG6U8z9hqiTbTshzok4dsw27DJeLY7FIn6XFKuOuKiDjAT/8oPE
+ClMeHydUMidq2WHBL3KkEbNcQVFWdaRCBFGmwKoilsOClotQkKoBftw2rJJLGrqq
+Qo0SrCKRahLNQ4zoCpI0SdINhckKlCSV6TphEJgylJkoM9VgmkokjQcGJcEdqTxs
+C34ocqM4xEWjViiMYxUOE2oTT3hT53u8iZ6FC+a5m+VJTEiaW7d39xb9LtnSfK7O
+3/ihzEw69OX40qIjVtfRyImGidErXd8L0j9XndRejPaumhwJpHQWIJB1x7dy6EHL
+Rz9o3UPaz7cEEqoy2i54ZqaFtoI3HZfzy8/sGN6Ut6k3vm97Rkn83LX9vRtTNj/K
+Sq7/8Pr5y/bHu3p8G3IGrmdBdnFibeGShqdrAleTz95YHtnZnbaltWd4PHcsI2Mw
+bSD7blLn+m0XPq3w5P4snOraXRNPmym9tG5F+gx8+GrbeH/8ZPH9nFsd03WB5uaL
+t5M3P+vOq/cM/nCeTDY9ONJ0s3DBsaLD676ufisIff2Te332mdQnp39pe4frltV/
+C/8erY1fLt4aMHb1peel/AE=
+=klSw
 -----END PGP MESSAGE-----
 
 And finally, I am proving ownership of this host by posting or
