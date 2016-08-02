@@ -6,18 +6,6 @@
     float: right;
 }
 
-
-.footer {
-    font-size: 0.6rem;
-    color: #555;
-    margin-top: 5rem;
-}
-
-.footer p {
-    margin: 0;
-}
-
-
 html {
   font: 16px/1.5 Inconsolata, sans-serif;
 }
