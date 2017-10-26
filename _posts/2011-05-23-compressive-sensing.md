@@ -1,5 +1,5 @@
 ---
-title: Ghetto BLAST
+title: Compressive Sensing
 date: 2011-05-23
 layout: post
 comments: true
