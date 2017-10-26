@@ -1,2 +1,2 @@
-web: Agnes Klimaite <agnek.com>
+web: Agne Klimaite <agnaite.com>
 logo: Sinbad Richardson <viennapitts.com>
