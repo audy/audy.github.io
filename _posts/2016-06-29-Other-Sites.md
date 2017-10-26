@@ -5,6 +5,7 @@ layout: post
 
 Other websites I've made and sometimes maintain in my free time:
 
+- [foto](http://foto.austinfanclub.com) - Photographs.
 - [MailCrow](http://mailcrow.com) - An escrow service for your email identity.
 - [Genome Explorer](http://genomes.austinfanclub.com) - A social
   network for microbes. Part of my PhD thesis. [Source
