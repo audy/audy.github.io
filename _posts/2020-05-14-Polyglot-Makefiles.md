@@ -64,10 +64,11 @@ Now you can write a pipeline that combines R and Python in a single file 🎉
 
 ## Bring in the containers
 
-Data analysis pipelines often have adventurous dependencies. Docker made all of
-that a lot easier but writing `docker run ...` can be cumbersome. What if we
-could make Docker the interpreter and write commands to be executed inside the
-container in-line as well?
+Data analysis pipelines often have
+[adventurous](https://github.com/thackl/gggenomes#motivation--concept)
+dependencies. Docker made all of that a lot easier but writing `docker run ...`
+can be cumbersome. What if we could make Docker the interpreter and write
+commands to be executed inside th) container in-line as well?
 
 ```makefile
 docker: .SHELLFLAGS = run --volume $(shell pwd):/workdir --rm --workdir /workdir --entrypoint /bin/bash ubuntu -c
