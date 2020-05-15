@@ -16,6 +16,8 @@ bash:
 	echo "$${greeting}, bash!"
 ```
 
+Now typing `make bash` will print `¡hola, bash!`
+
 What else is possible? Can I use other programming languages as the shell?  Is
 it possible to write in-line Python in a `Makefile`?
 
@@ -27,12 +29,16 @@ python:
 	print(f"{greeting}, python!")
 ```
 
+[Yes, this is possible](https://www.youtube.com/watch?v=BtyjaSqdh2I)
+
 Typing `make python` will print `hello, python!`. Notice that there is now a
 new directive, `.ONESHELL`. Normally, `make` will evaluate each command in a
 separate shell meaning that, in this example, `greeting` would be undefined in
 the second line. Adding `.ONESHELL` to the top of your `Makefile`, as
 recommended by someone else whose last name begins with Davis-\* and blogs
-about `make`, in ["Your Makefiles are wrong"](https://tech.davis-hansson.com/p/make/).
+about `make`, in ["Your Makefiles are
+wrong"](https://tech.davis-hansson.com/p/make/), causes multi-line code in the
+Make directive to be evaluated in a single call to Python.
 
 What about writing R in-line in a Makefile? Note the addition of `.SHELLFLAGS`.
 By default, `make` runs `SHELL -c "your\nscript\nhere"` which is not compatible
@@ -46,9 +52,14 @@ R:
 	message(paste0(greeting, ", R!"))
 ```
 
-**sigh** changing the interpreter is boring to me now. I want to write scripts
-in-line in a `Makefile` that run in Docker containers. Yes, that's possible
-too:
+Now you can write a pipeline that combines R and Python in a single file 🎉
+
+## Bring in the Containers
+
+Data analysis pipelines often have adventurous dependencies. Docker made all of
+that a lot easier but writing `docker run ...` can be cumbersome. What if we
+could make Docker the interpreter and write commands to be executed inside the
+container in-line as well?
 
 ```makefile
 docker: .SHELLFLAGS = run --rm --entrypoint /bin/bash ubuntu -c
@@ -57,7 +68,8 @@ docker:
 	echo "hello, $$(uname -a)!"
 ```
 
-This prints:
+Again, this is possible. Running `make docker` will run `echo ...` in a Docker
+container running Ubuntu.
 
 ```
 hello, Linux 453c728113d6 4.19.76-linuxkit #1 SMP Fri Apr 3 15:53:26 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux!
