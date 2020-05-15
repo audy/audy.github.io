@@ -18,8 +18,11 @@ bash:
 
 Now typing `make bash` will print `¡hola, bash!`
 
+
 What else is possible? Can I use other programming languages as the shell?  Is
 it possible to write in-line Python in a `Makefile`?
+
+## Python
 
 ```makefile
 .ONESHELL:
@@ -31,13 +34,17 @@ python:
 
 [Yes, this is possible](https://www.youtube.com/watch?v=BtyjaSqdh2I)
 
-Typing `make python` will print `hello, python!`. Notice that there is now a
-new directive, `.ONESHELL`. Normally, `make` will evaluate each command in a
-separate shell meaning that, in this example, `greeting` would be undefined in
-the second line. Adding `.ONESHELL` to the top of your `Makefile`, as
-recommended by [someone else whose last name begins with Davis-\* and blogs
-about `make`](https://tech.davis-hansson.com/p/make/), causes multi-line code
-in the Make directive to be evaluated in a single call to Python.
+Typing `make python` will print `hello, python!`.
+
+Notice that there is a variable `.ONESHELL` being set. Normally, `make` will
+evaluate each command in a separate shell meaning that, in this example,
+`greeting` would be undefined in the second line. Adding `.ONESHELL` to the top
+of your `Makefile`, as recommended by [someone else whose last name begins with
+Davis-\* and blogs about `make`](https://tech.davis-hansson.com/p/make/),
+causes multi-line code in the Make directive to be evaluated in a single call
+to Python.
+
+## R
 
 What about writing R in-line in a Makefile? Note the addition of `.SHELLFLAGS`.
 By default, `make` runs `SHELL -c "your\nscript\nhere"` which is not compatible
@@ -55,7 +62,7 @@ This is equivalent to running `Rscript -e 'greeting = "bounjour"; message(paste0
 
 Now you can write a pipeline that combines R and Python in a single file 🎉
 
-## Bring in the Containers
+## Bring in the containers
 
 Data analysis pipelines often have adventurous dependencies. Docker made all of
 that a lot easier but writing `docker run ...` can be cumbersome. What if we
