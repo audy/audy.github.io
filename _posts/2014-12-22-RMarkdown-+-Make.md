@@ -35,6 +35,7 @@ which will create a target `.pdf` file for all of the `.Rmd` files in the
 current working directory:
 
 ```makefile
+# define targets
 SOURCES=$(shell find notebooks -name *.Rmd)
 TARGETS=$(SOURCES:%.Rmd=%.pdf)
 
