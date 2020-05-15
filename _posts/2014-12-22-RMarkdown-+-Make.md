@@ -17,7 +17,7 @@ tiny Makefile that automatically renders Rmarkdown files to HTML.
 In the example repo, there is a `Makefile` which defines a couple of rules for
 converting `.md` files into `.pdf` and `.html` files:
 
-```
+```makefile
 %.html: %.Rmd
 	@echo "$< -> $@"
 	@Rscript -e "rmarkdown::render('$<')"
@@ -34,7 +34,7 @@ To automatically convert all `.md` files to `.pdf`, add the following lines
 which will create a target `.pdf` file for all of the `.Rmd` files in the
 current working directory:
 
-```
+```makefile
 SOURCES=$(shell find notebooks -name *.Rmd)
 TARGETS=$(SOURCES:%.Rmd=%.pdf)
 
