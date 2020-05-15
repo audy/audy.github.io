@@ -19,11 +19,9 @@ converting `.md` files into `.pdf` and `.html` files:
 
 ```makefile
 %.html: %.Rmd
-	@echo "$< -> $@"
 	@Rscript -e "rmarkdown::render('$<')"
 
 %.pdf: %.Rmd
-	@echo "$< -> $@"
 	@Rscript -e "rmarkdown::render('$<')"
 ```
 
