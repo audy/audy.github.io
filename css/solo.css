@@ -17,6 +17,7 @@ html {
 }
 
 body {
+  background: #eee;
   margin: 2rem 0 5rem;
   color: #333;
 }
@@ -28,7 +29,7 @@ body {
 }
 
 a {
-  color: tomato;
+  color: olive;
   text-decoration: none;
 }
 
@@ -50,7 +51,7 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 1.25rem;
-  color:tomato;
+  color: olive;
   margin-top: 2rem;
 }
 
@@ -136,8 +137,9 @@ td, th {
 }
 
 pre, code {
+  background: #ddd;
   font-family: inherit;
-  background-color: #eee;
+  background-color: #ddd;
 }
 
 pre {
