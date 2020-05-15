@@ -35,7 +35,7 @@ Now compress them together:
 sizes). So the strings must be similar.
 
 I wanted to see if this would work with querying DNA databases for similar
-genes, so I wrote a [little script](#Source).
+genes, so I wrote a [little script](#source).
 
 I did some quick testing on a 16S database and by golly it seems to work. Even
 with partial sequences. I would like to do some benchmarking to see how
