@@ -63,14 +63,17 @@ could make Docker the interpreter and write commands to be executed inside the
 container in-line as well?
 
 ```makefile
-docker: .SHELLFLAGS = run --rm --entrypoint /bin/bash ubuntu -c
+docker: .SHELLFLAGS = run --volume $(shell pwd):/workdir --rm --workdir /workdir --entrypoint /bin/bash ubuntu -c
 docker: SHELL := docker
 docker:
 	echo "hello, $$(uname -a)!"
 ```
 
 Again, this is possible. Running `make docker` will run `echo ...` in a Docker
-container running Ubuntu.
+container running Ubuntu. Note the `--volume` flag which will mount the current
+working directory as the container's working directory meaning that files can
+be read/created between your local filesystem and that of the container's. So
+build artifacts can be shared between make directives.
 
 ```
 hello, Linux 453c728113d6 4.19.76-linuxkit #1 SMP Fri Apr 3 15:53:26 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux!
