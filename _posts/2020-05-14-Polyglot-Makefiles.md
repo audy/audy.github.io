@@ -11,7 +11,7 @@ this out when trying to use bash instead of the default `/bin/sh` by setting
 .ONESHELL:
 bash: SHELL := bash
 bash:
-  # note: the double dollar-sign is required because Make substitues $variables
+	# note: the double dollar-sign is required because Make substitues $variables
 	export greeting="¡hola"
 	echo "$${greeting}, bash!"
 ```
