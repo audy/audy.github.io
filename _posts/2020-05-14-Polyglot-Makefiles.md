@@ -51,6 +51,8 @@ R:
 	message(paste0(greeting, ", R!"))
 ```
 
+This is equivalent to running `Rscript -e 'greeting = "bounjour"; message(paste0(greeting, ", R!"));'`
+
 Now you can write a pipeline that combines R and Python in a single file 🎉
 
 ## Bring in the Containers
