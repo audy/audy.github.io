@@ -80,7 +80,7 @@ docker:
 Again, this is possible. Running `make docker` will run `echo ...` in a Docker
 container running Ubuntu. Note the `--volume` flag which will mount the current
 working directory as the container's working directory meaning that files can
-be read/created between your local filesystem and that of the container's. So
+be read/created between your local filesystem and that of the container. So
 build artifacts can be shared between make directives.
 
 ```
