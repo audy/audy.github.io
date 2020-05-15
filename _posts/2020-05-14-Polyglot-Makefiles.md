@@ -35,10 +35,9 @@ Typing `make python` will print `hello, python!`. Notice that there is now a
 new directive, `.ONESHELL`. Normally, `make` will evaluate each command in a
 separate shell meaning that, in this example, `greeting` would be undefined in
 the second line. Adding `.ONESHELL` to the top of your `Makefile`, as
-recommended by someone else whose last name begins with Davis-\* and blogs
-about `make`, in ["Your Makefiles are
-wrong"](https://tech.davis-hansson.com/p/make/), causes multi-line code in the
-Make directive to be evaluated in a single call to Python.
+recommended by [someone else whose last name begins with Davis-\* and blogs
+about `make`](https://tech.davis-hansson.com/p/make/), causes multi-line code
+in the Make directive to be evaluated in a single call to Python.
 
 What about writing R in-line in a Makefile? Note the addition of `.SHELLFLAGS`.
 By default, `make` runs `SHELL -c "your\nscript\nhere"` which is not compatible
