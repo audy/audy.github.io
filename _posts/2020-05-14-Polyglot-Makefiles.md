@@ -80,9 +80,14 @@ hello, Linux 453c728113d6 4.19.76-linuxkit #1 SMP Fri Apr 3 15:53:26 UTC 2020 x8
 This started as an experiment to see what is possible with `make`. But it was
 motivated by a real world problem: I often need to combine tools across
 programming languages and environments to run data analysis pipelines. I like
-to automate these processes and make is a great tool for doing so. Having
-everything in-line is more readable and having everything in a single file
-means that I have to jump between fewer tabs to understand the pipeline itself.
+to automate things and `make` is a great tool for doing so. Having everything
+in-line is more readable and having everything in a single file means that I
+have to jump between fewer tabs to understand the pipeline itself.
+
+The ability to write commands that get executed in Docker means that I have to
+spend less time figuring out how to get a bunch of dependencies installed in a
+single container which becomes increasingly difficult as the number of
+dependencies increases (especially if you work in Bioinformatics).
 
 ## Full Makefile
 
