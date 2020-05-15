@@ -3,6 +3,11 @@ title: RMarkdown & Continuous Integration
 layout: post
 ---
 
+In my [previous
+post](http://agdr.org/2015/01/13/RMarkdown-+-Continuous-Integration.html), I
+wrote about writing a `Makefile` to render `.Rmd` files to `pdf` (or `html`)
+automatically.
+
 I've been playing around with using continuous integration for scientific
 analysis using [Travis-CI](https://travis-ci.com), RMarkdown and GitHub. This
 way, whenever I perform a `git push` to GitHub, Travis-CI will pull down the
