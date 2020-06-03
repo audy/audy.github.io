@@ -5,10 +5,10 @@ layout: null
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>Austin G. Davis-Richardson</title>
- <link href="http://heyaudy.com/atom.xml" rel="self"/>
- <link href="http://heyaudy.com/"/>
+ <link href="http://agdr.com/atom.xml" rel="self"/>
+ <link href="http://agdr.com/"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
- <id>http://audy.github.com/</id>
+ <id>http://agdr.com/</id>
  <author>
    <name>Austin G. Davis-Richardson</name>
    <email>harekrishna@gmail.com</email>
@@ -16,10 +16,10 @@ layout: null
 
  {% for post in site.posts %}
  <entry>
-   <title>{{ post.title }}</title>
-   <link href="http://heyaudy.com{{ post.url }}"/>
+   <title>{{ post.title | xml_escape }}</title>
+   <link href="http://agdr.com{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
-   <id>http://audy.github.com{ post.id }}</id>
+   <id>http://agdr.com{{ post.id }}</id>
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
  {% endfor %}
