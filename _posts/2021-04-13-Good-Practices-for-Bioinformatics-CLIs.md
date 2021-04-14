@@ -70,9 +70,11 @@ If you really wanted to make this safe, you'd have to do the following:
 
 ```python
 try:
-  exit_code = subprocess.call(["ls", "--not-a-real-argument"])
+    exit_code = subprocess.call(["ls", "--not-a-real-argument"])
 except FileNotFoundError:
-  print("program does not exist")
+    print("program does not exist")
+finally:
+    assert exit_code == 0, "Program did not exit successfully"
 ```
 
 But that involves a lot more typing than simply using `subprocess.check_output`:
