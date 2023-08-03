@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div id="header">
+  <h1>🌊 agdr.org</h1>
+</div>
+
+<div>
+  <p>
+    My name is Austin G. Davis-Richardson. Welcome to my home on the web.
+  </p>
+</div>
+
+<div id="contact">
+  <h3>Contact</h3>
+  <ul>
+    <li>Email - <a id="email-link" href=""></a></li>
+    <li>Mastodon - <a href="https://mastodon.social/@audy">@audy</a></li>
+  </ul>
+</div>
+
+<div id="links">
+  <h3>Links</h3>
+  <ul>
+    <li><a href="https://scholar.google.com/citations?hl=en&user=xw0mHYEAAAAJ&view_op=list_works&sortby=pubdate">Publications</a></li>
+    <li><a href="https://github.com/audy/">GitHub</a></li>
+  </ul>
+</div>
+
+<div id="table-of-contents">
+  {% for p in section.subsections %}
+    {% set subsection = get_section(path=p) %}
+    <h3>{{ subsection.title }}</h3>
+    <ul>
+      {% for page in subsection.pages %}
+      <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a> - <span class="dimmed">{{ page.date }}</span></li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</div>
+
+<script type="text/javascript">
+  // JavaScript function to create the email address dynamically
+  function generateEmail() {
+    var user = "hello";
+    var domain = "agdr.org";
+    var emailAddress = user + "@" + domain;
+    var emailElement = document.getElementById("email-link");
+    emailElement.innerHTML = emailAddress;
+    emailElement.href = "mailto:" + emailAddress;
+  }
+  generateEmail();
+</script>
+
+{% endblock content %}

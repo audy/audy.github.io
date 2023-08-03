@@ -1,0 +1,9 @@
+# The URL the site will be built for
+base_url = "https://agdr.org"
+compile_sass = false
+
+generate_feed = true
+
+[markdown]
+highlight_code = true
+highlight_theme = "charcoal"
