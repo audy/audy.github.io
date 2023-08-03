@@ -1,2 +1,0 @@
-web: Agne Klimaite <agnaite.com>
-logo: Sinbad Richardson <viennapitts.com>
