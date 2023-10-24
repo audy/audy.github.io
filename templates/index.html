@@ -42,7 +42,7 @@
       <li>
         <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
         <span class="dimmed">{{ page.date }}</span>
-        <p>{{ page.description | markdown(inline=true) }}</p>
+        <p>{{ page.description | markdown(inline=true) | safe}}</p>
       </li>
       {% endfor %}
     </ul>
