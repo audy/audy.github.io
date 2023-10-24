@@ -1,6 +1,7 @@
 +++
 title = "Compressive Sensing"
 date = 2011-05-23
+description = "DNA sequence similarity estimation using Gzip"
 +++
 
 ## Comparing DNA sequences using `gzip`

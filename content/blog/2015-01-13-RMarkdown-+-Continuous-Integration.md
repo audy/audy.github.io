@@ -1,6 +1,7 @@
 +++
 title = "RMarkdown & Continuous Integration"
 date = 2015-01-13
+description = "Continuous integration principals but for science"
 +++
 
 In my [previous

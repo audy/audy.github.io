@@ -6,3 +6,10 @@ Site built using [Zola](https://github.com/getzola/zola).
 
 1. Push to master
 2. Let GitHub Actions do its thing
+
+## Development
+
+
+```sh
+zola serve
+```

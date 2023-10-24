@@ -1,6 +1,7 @@
 +++
 title = "RMarkdown + Make"
 date = 2014-12-22
+description = "A workflow for reproducible scientific analysis and publication"
 +++
 
 Lately, I've been using Rmarkdown + Make to perform statistical analysis and

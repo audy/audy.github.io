@@ -7,10 +7,20 @@
 
   <style type="text/css">
     /* Default styles for all screen sizes */
-    body {
+
+    html, body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
       font-family: "Consolas", monospace;
+    }
+
+    body {
       padding: 20px;
-      background: #eee;
+      width: 800px;
+      display: block;
     }
 
     :not(pre) > code {
@@ -18,13 +28,21 @@
       color: #2b2c2f;
     }
 
+    .blog-description li {
+      margin-bottom: 30px;
+    }
+
+    .no-dots li {
+      list-style: none;
+    }
+
     a {
-      color: #c594c5;
+      color: sienna;
       font-weight: bold;
     }
 
     hr {
-      color: turquoise;
+      color: sienna;
     }
     
     pre {
@@ -52,18 +70,20 @@
 </head>
 
 <body>
-  <section>
-    <div>
-      {% block content %}
-      {% endblock %}
-    </div>
-  </section>
+
+  <div>
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr/>
+      (c) 2011-2023 Austin G. Davis-Richardson
+      <br/>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+    </span>
+  </div>
+
 </body>
-
-<p>
-  <span class="dimmed">
-  (c) 2011-2023 Austin G. Davis-Richardson - Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
-  </span>
-</p>
-
 </html>

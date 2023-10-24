@@ -6,15 +6,20 @@
   <h1><span id="random-emoji">🍑</span> <span id="title">agdr.org</span></h1>
 </div>
 
+
 <div>
-  <p>
-    My name is Austin G. Davis-Richardson. Welcome to my home on the web.
-  </p>
+  <h3>Austin Davis-Richardson</h3>
+  <ul class="no-dots">
+    <li>
+      Metagenomics scientist and software engineer
+    </li>
+  </ul>
 </div>
+
 
 <div id="contact">
   <h3>Contact</h3>
-  <ul>
+  <ul class="no-dots">
     <li>Email - <a id="email-link" href=""></a></li>
     <li>Mastodon - <a rel="me" href="https://mastodon.social/@audy">@audy</a></li>
   </ul>
@@ -22,7 +27,7 @@
 
 <div id="links">
   <h3>Links</h3>
-  <ul>
+  <ul class="no-dots">
     <li><a href="https://scholar.google.com/citations?hl=en&user=xw0mHYEAAAAJ&view_op=list_works&sortby=pubdate">Publications</a></li>
     <li><a href="https://github.com/audy/">GitHub</a></li>
   </ul>
@@ -32,9 +37,13 @@
   {% for p in section.subsections %}
     {% set subsection = get_section(path=p) %}
     <h3>{{ subsection.title }}</h3>
-    <ul>
+    <ul class="no-dots blog-description">
       {% for page in subsection.pages %}
-      <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a> - <span class="dimmed">{{ page.date }}</span></li>
+      <li>
+        <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
+        <span class="dimmed">{{ page.date }}</span>
+        <p>{{ page.description | markdown(inline=true) }}</p>
+      </li>
       {% endfor %}
     </ul>
   {% endfor %}

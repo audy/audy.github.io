@@ -1,6 +1,7 @@
 +++
 title = "Polyglot Makefiles"
 date = 2020-05-14
+description = "Did you know that you can use any programming language in a Makefile?"
 +++
 
 Did you know that you can change the shell in a `Makefile`? It's true. I found
