@@ -22,7 +22,7 @@ This section is dedicated to the countless hours I have spent debugging tools
 which execute an external process but do not produce an error if that external
 process fails for some reason.
 
-## No: `os.system`
+## Avoid `os.system`
 
 `os.system` is the shortest to type method for running an external program but
 commonly causes bugs due to the fact that if the command fails, the Python
@@ -95,7 +95,7 @@ subprocess.call(["ls", "--not-a-real-argument"])
 running external commands. For more advanced features such as reading from
 standard out or standard error, see `subprocess.Popen`.
 
-# Too Much Magic #1: Automatic Filename(s)
+# Automatically Generated Output Filenames
 
 Many tools I've encountered will automatically generate the paths to output
 file(s). This is done to help the user. Who wants to manually specify the
@@ -161,7 +161,7 @@ wc -l results.csv
 *tl;dr* while it might appear that automatically generating output filenames
 makes a user's life easier; it ends up adding work down the road.
 
-# Too Much Magic #2: Automatic Updates
+# Automatically Self-Updating Code / Data
 
 Tools that use an external database sometimes check to see if the local copy of
 that database is up-to-date and will automatically check for and download a
