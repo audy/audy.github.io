@@ -155,7 +155,7 @@
        const colorClicked = ctx.getImageData(x, y, 1, 1).data;
        const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
 
-       drawGrid(colorClickedHex);
+       drawGrid();
 
        document.documentElement.style.setProperty('--link-color', colorClickedHex);
    });
