@@ -2,13 +2,11 @@
 
 {% block content %}
 
-<div id="header">
-  <h1><span id="random-emoji">🍑</span> <span id="title">agdr.org</span></h1>
-</div>
-
 
 <div>
-  <h3>Austin Davis-Richardson</h3>
+  <h3>
+    Austin Davis-Richardson
+  </h3>
   <ul class="no-dots">
     <li>
       Metagenomics scientist and software engineer
@@ -49,34 +47,5 @@
   {% endfor %}
 </div>
 
-<script type="text/javascript">
-  // JavaScript function to create the email address dynamically
-  function generateEmail() {
-    var user = "hello";
-    var domain = "agdr.org";
-    var emailAddress = user + "@" + domain;
-    var emailElement = document.getElementById("email-link");
-    emailElement.innerHTML = emailAddress;
-    emailElement.href = "mailto:" + emailAddress;
-  }
-  generateEmail();
-
-  // Function to get a random emoji from the array
-  function getRandomEmoji() {
-    const emojis = [
-      "🌿", "🌲", "🌳", "🍁", "🍂", "🍃", "🌱", "🌷", "🌹", "🌺",
-      "🌻", "🌼", "🌸", "🌾", "🌵", "🌴", "🌲", "🍄", "🌰", "🍀",
-      "🍁", "🍂", "🍃", "🍇", "🍈", "🍉", "🍊", "🍋",
-      "🍎", "🍏", "🍐", "🍒", "🍓", "🍅", "🍇", "🍈",
-      "🍉", "🍊", "🍋"
-     ];
-    return emojis[Math.floor(Math.random() * emojis.length)];
-  }
-
-  // On page load, insert a random emoji into the span with id "random-emoji"
-  const emoji = getRandomEmoji();
-  const randomEmojiSpan = document.getElementById('random-emoji');
-  randomEmojiSpan.textContent = emoji;
-</script>
 
 {% endblock content %}

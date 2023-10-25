@@ -39,15 +39,20 @@
       list-style: none;
     }
 
+    :root {
+        --link-color: black;
+    }
+
     a {
-      color: sienna;
-      font-weight: bold;
+        color: var(--link-color);
+        font-weight: bold;
     }
 
     hr {
-      color: sienna;
+      color: #fff;
+      background-color: var(--link-color);
     }
-    
+
     pre {
       padding: 12px;
       border-radius: 6px;
@@ -58,13 +63,13 @@
     .dimmed {
       color: #777;
     }
-    
+
     /* Media query for smaller screens (e.g., mobile phones) */
     @media (max-width: 768px) {
       body {
         padding: 10px; /* Adjust padding as needed for smaller screens */
       }
-    
+
       pre {
         padding: 8px; /* Adjust padding as needed for smaller screens */
       }
@@ -73,6 +78,16 @@
 </head>
 
 <body>
+
+
+  <div id="header">
+    <h1>
+      <canvas id="the-canvas" width=50 height=50>
+      </canvas>
+      <span id="title">agdr.org</span>
+    </h1>
+  </div>
+  <hr/>
 
   <div>
     {% block content %}
@@ -87,6 +102,65 @@
       Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
     </span>
   </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+  <script type="text/javascript">
+   const canvas = document.getElementById('the-canvas');
+   const ctx = canvas.getContext('2d');
+
+   const rows = 10;
+   const columns = 10;
+   const squareSize = 480 / 100;
+
+   function getRandomColor() {
+       const letters = '0123456789ABCDEF';
+       let color = '#';
+       for (let i = 0; i < 6; i++) {
+           color += letters[Math.floor(Math.random() * 16)];
+       }
+       return color;
+   }
+
+   function drawGrid(color) {
+     for (let i = 0; i < rows; i++) {
+         for (let j = 0; j < columns; j++) {
+             ctx.beginPath();
+             ctx.fillStyle = color || getRandomColor();
+             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+             ctx.stroke();
+         }
+     }
+   }
+
+   canvas.addEventListener('click', (event) => {
+       const x = event.offsetX;
+       const y = event.offsetY;
+
+       const columnIndex = Math.floor(x / squareSize);
+       const rowIndex = Math.floor(y / squareSize);
+
+       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
+       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
+
+       drawGrid(colorClickedHex);
+
+       document.documentElement.style.setProperty('--link-color', colorClickedHex);
+   });
+   drawGrid();
+ </script>
 
 </body>
 </html>
