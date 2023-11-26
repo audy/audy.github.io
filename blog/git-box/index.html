@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    /* Default styles for all screen sizes */
+
+    html, body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-family: "Consolas", monospace;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    :not(pre) > code {
+      border-radius: 4px;
+      padding: 1px;
+      background-color: #eee;
+      font-style: italic;
+      font-family: "Consolas", monospace;
+    }
+
+    .blog-description li {
+      margin-bottom: 30px;
+    }
+
+    .no-dots li {
+      list-style: none;
+    }
+
+    :root {
+        --link-color: black;
+    }
+
+    a {
+        color: var(--link-color);
+        font-weight: bold;
+    }
+
+    hr {
+      color: #fff;
+      background-color: var(--link-color);
+    }
+
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      font-family: "Consolas", monospace;
+      white-space: pre-wrap; /* Allow text to wrap on small screens */
+    }
+
+    .dimmed {
+      color: #777;
+    }
+
+    /* Media query for smaller screens (e.g., mobile phones) */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px; /* Adjust padding as needed for smaller screens */
+      }
+
+      pre {
+        padding: 8px; /* Adjust padding as needed for smaller screens */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="header">
+    <h1>
+      <canvas id="the-canvas" width=50 height=50>
+      </canvas>
+      <span id="title">agdr.org</span>
+    </h1>
+  </div>
+  <hr/>
+
+  <div>
+    
+
+<a href="/">&lt; Back</a>
+
+<h1 class="title">
+  Git Dropbox with Gitreceive
+</h1>
+
+<p class="subtitle dimmed">2014-10-24</p>
+
+
+<h2 id="how-to-setup-a-server-that-will-automatically-receive-and-save-anything-you-git-push-to-it">How to setup a server that will automatically receive and save anything you <code>git push</code> to it.</h2>
+<p>I wanted to host my git repositories on a private server but didn't want to
+setup something big like Gitlab or Gitorious to do it. I also wanted to be able
+to <code>git push</code> anything and have the server automatically create a new git
+repository and store the data.</p>
+<p>The easiest way I found to do this was to use
+<a href="https://github.com/progrium/gitreceive">gitreceive</a> by <a href="http://progrium.com/blog/">Jeff
+Lindsay</a> who created
+<a href="https://github.com/progrium/gitreceive">Dokku</a>.</p>
+<p>I followed the instructions for setting up gitreceive but ran into a small
+hangup when trying to push a repository:</p>
+<pre style="background-color:#2b2c2f;color:#cccece;"><code><span>$ gp home master
+</span><span>Counting objects: 1032, done.
+</span><span>Delta compression using up to 4 threads.
+</span><span>Compressing objects: 100% (1020/1020), done.
+</span><span>Writing objects: 100% (1032/1032), 5.04 MiB | 1.20 MiB/s, done.
+</span><span>Total 1032 (delta 82), reused 0 (delta 0)
+</span><span>To git@foo.co:bar
+</span><span> ! [remote rejected] master -&gt; master (pre-receive hook declined)
+</span><span>error: failed to push some refs to &#39;git@foo.co:bar&#39;
+</span></code></pre>
+<p>The error <code>pre-receive hook declined</code> means that the receiver script that
+gitreceive installs to <code>/home/git</code> was crashing. However, the default receiver
+script does nothing which makes it odd that it would crash. The cause of the
+problem is that <a href="https://github.com/progrium/gitreceive/blob/ff8d03ec8d308f6dec8142b9c4e8518591d6e32f/gitreceive#L115">gitreceive is piping the output of <code>git archive</code> to the
+receiver
+script</a>.
+The receiver script does nothing so exits before <code>cat</code> cat finish. This causes
+<code>cat</code>, then gitreceive to crash with a non-zero exit status causing the
+<code>pre-receive hook declined</code> error.</p>
+<p>The solution to this is simple. Add the following line to the receiver script:</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#6699cc;">cat /dev/stdin </span><span style="color:#5fb3b3;">&gt;</span><span style="color:#6699cc;"> /dev/null
+</span></code></pre>
+<p>This will wait for gitreceive to finish piping the archived repository before
+exiting. Now you can push a new repository and gitreceive will automatically
+create and receive it.</p>
+<pre style="background-color:#2b2c2f;color:#cccece;"><code><span>git push home master
+</span><span>Counting objects: 1032, done.  Delta compression using up to 4 threads.
+</span><span>Compressing objects: 100% (1020/1020), done.
+</span><span>Writing objects: 100% (1032/1032), 5.04 MiB | 1.20 MiB/s, done.
+</span><span>Total 1032 (delta 82), reused 0 (delta 0)
+</span><span> __________________
+</span><span>&lt; Have a nice day! &gt;
+</span><span> ------------------
+</span><span>        \   ^__^
+</span><span>         \  (oo)\_______
+</span><span>            (__)\       )\/\
+</span><span>                ||----w |
+</span><span>                ||     ||
+</span><span>To git@foo.co:bar
+</span><span>* [new branch]      master -&gt; master
+</span></code></pre>
+<p>Note: you do <strong>not</strong> need to save a copy of the archive that gitreceive is
+piping into the receiver script. The repository's data is still being saved in
+<code>/home/git/&lt;reponame&gt;</code>. You can verify this by running <code>git clone</code>.</p>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr/>
+      (c) 2011-2023 Austin G. Davis-Richardson
+      <br/>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+  <script type="text/javascript">
+   const canvas = document.getElementById('the-canvas');
+   const ctx = canvas.getContext('2d');
+
+   const rows = 10;
+   const columns = 10;
+   const squareSize = 480 / 100;
+
+   function getRandomColor() {
+       const letters = '0123456789ABCDEF';
+       let color = '#';
+       for (let i = 0; i < 6; i++) {
+           color += letters[Math.floor(Math.random() * 16)];
+       }
+       return color;
+   }
+
+   function drawGrid(color) {
+     for (let i = 0; i < rows; i++) {
+         for (let j = 0; j < columns; j++) {
+             ctx.beginPath();
+             ctx.fillStyle = color || getRandomColor();
+             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+             ctx.stroke();
+         }
+     }
+   }
+
+   canvas.addEventListener('click', (event) => {
+       const x = event.offsetX;
+       const y = event.offsetY;
+
+       const columnIndex = Math.floor(x / squareSize);
+       const rowIndex = Math.floor(y / squareSize);
+
+       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
+       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
+
+       drawGrid();
+
+       document.documentElement.style.setProperty('--link-color', colorClickedHex);
+   });
+   drawGrid();
+ </script>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    /* Default styles for all screen sizes */
+
+    html, body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-family: "Consolas", monospace;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    :not(pre) > code {
+      border-radius: 4px;
+      padding: 1px;
+      background-color: #eee;
+      font-style: italic;
+      font-family: "Consolas", monospace;
+    }
+
+    .blog-description li {
+      margin-bottom: 30px;
+    }
+
+    .no-dots li {
+      list-style: none;
+    }
+
+    :root {
+        --link-color: black;
+    }
+
+    a {
+        color: var(--link-color);
+        font-weight: bold;
+    }
+
+    hr {
+      color: #fff;
+      background-color: var(--link-color);
+    }
+
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      font-family: "Consolas", monospace;
+      white-space: pre-wrap; /* Allow text to wrap on small screens */
+    }
+
+    .dimmed {
+      color: #777;
+    }
+
+    /* Media query for smaller screens (e.g., mobile phones) */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px; /* Adjust padding as needed for smaller screens */
+      }
+
+      pre {
+        padding: 8px; /* Adjust padding as needed for smaller screens */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="header">
+    <h1>
+      <canvas id="the-canvas" width=50 height=50>
+      </canvas>
+      <span id="title">agdr.org</span>
+    </h1>
+  </div>
+  <hr/>
+
+  <div>
+    
+
+<a href="/">&lt; Back</a>
+
+<h1 class="title">
+  Pypette
+</h1>
+
+<p class="subtitle dimmed">2011-02-06</p>
+
+
+<h2 id="bioinformatics-algorithms-implemented-in-c-wrapped-in-python">Bioinformatics algorithms implemented in C, wrapped in Python.</h2>
+<p>Bioinformatics applications are naturally targeted at solving a specific
+problem. If a researcher creates a new protocol, he or she must a.) adjust that
+protocol to the software b.) write software specific to that problem or c.) wait
+for someone to write software specific to that problem. The goal of Pypette is
+to make option b easier by implementing common bioinformatics algorithms that
+can be mixed and matched.</p>
+<h2 id="example-problem">Example problem:</h2>
+<p>A researcher wants to perform a <em>de novo</em> assembly from short reads using a
+de-Brujin graph approach similar to Velvet, taking into account quality scores.
+The short reads came from an environmental sample amplified with random hexamers
+and is thus a metagenomic sample. The researcher estimates that there are 4
+prominent organisms in the sample and each should have a genome coverage of
+about 18x. Before assembling, the researcher wishes to bin the reads according
+to which organism the read is most likely to belong to using the hidden-markov
+model approach (via: <a href="http://ivory.idyll.org/blog/aug-10/assembly-part-i.html">Assembly is hard because it's not
+decomposable</a>)</p>
+<p>This procedure would be complicated to implement from scratch. As a result the
+researcher may either give up, change the experiment, or attempt to carry out
+the procedure by adapting existing tools.</p>
+<h2 id="solution">Solution:</h2>
+<p>One way to make this easier would be to implement sensible interfaces (APIs) to
+commonly used bioinformatics programs allowing them to be combined in a
+programming language.</p>
+<p>The following example is contrived and not implemented. It simply represents an
+ideal scenario.</p>
+<p>In this example solution, the inputs and outputs of the read binner and
+assembler are easily combined using an imaginary Python library.</p>
+<pre data-lang="python" style="background-color:#2b2c2f;color:#cccece;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#c594c5;">from </span><span>pypette </span><span style="color:#c594c5;">import </span><span>debrujin</span><span style="color:#5fb3b3;">, </span><span>markov</span><span style="color:#5fb3b3;">, </span><span>fastq
+</span><span>
+</span><span style="color:#5f6364;"># Load the reads
+</span><span style="color:#c594c5;">with </span><span style="color:#6699cc;">open</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">reads.fastq</span><span style="color:#5fb3b3;">&quot;) </span><span style="color:#c594c5;">as </span><span>handle</span><span style="color:#5fb3b3;">:
+</span><span>    reads </span><span style="color:#5fb3b3;">= </span><span style="color:#6699cc;">fastq</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">load</span><span style="color:#5fb3b3;">(</span><span style="color:#6699cc;">handle</span><span style="color:#5fb3b3;">)
+</span><span>
+</span><span style="color:#5f6364;"># Cluster reads
+</span><span>reads_binned </span><span style="color:#5fb3b3;">= </span><span style="color:#6699cc;">markov</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">cluster</span><span style="color:#5fb3b3;">(</span><span style="color:#6699cc;">reads</span><span style="color:#5fb3b3;">, </span><span style="color:#f99157;">probability</span><span style="color:#5fb3b3;">=</span><span style="color:#c594c5;">lambda </span><span style="color:#f99157;">x</span><span style="color:#5fb3b3;">: </span><span style="color:#6699cc;">x</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">qual</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">to_f</span><span style="color:#5fb3b3;">(), </span><span style="color:#f99157;">bins</span><span style="color:#5fb3b3;">=</span><span style="color:#f99157;">4</span><span style="color:#5fb3b3;">)
+</span><span>
+</span><span style="color:#5f6364;"># Construction of debrujin graph per bin
+</span><span>graphs </span><span style="color:#5fb3b3;">= {}
+</span><span style="color:#c594c5;">for </span><span>n</span><span style="color:#5fb3b3;">, </span><span style="color:#6699cc;">bin </span><span style="color:#c594c5;">in </span><span style="color:#6699cc;">enumerate</span><span style="color:#5fb3b3;">(</span><span style="color:#6699cc;">reads_binned</span><span style="color:#5fb3b3;">):
+</span><span>    graphs</span><span style="color:#5fb3b3;">[</span><span>n</span><span style="color:#5fb3b3;">] = </span><span style="color:#6699cc;">debrujin</span><span style="color:#5fb3b3;">(</span><span style="color:#6699cc;">bin</span><span style="color:#5fb3b3;">, </span><span style="color:#f99157;">probability</span><span style="color:#5fb3b3;">=</span><span style="color:#c594c5;">lambda </span><span style="color:#f99157;">x</span><span style="color:#5fb3b3;">: </span><span style="color:#6699cc;">x</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">qual</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">to_f</span><span style="color:#5fb3b3;">(), </span><span style="color:#f99157;">k</span><span style="color:#5fb3b3;">=</span><span style="color:#f99157;">31</span><span style="color:#5fb3b3;">)
+</span><span>
+</span><span style="color:#5f6364;"># Solve graph, convert to contigs
+</span><span>contigs </span><span style="color:#5fb3b3;">= {</span><span>n</span><span style="color:#5fb3b3;">: </span><span>graphs</span><span style="color:#5fb3b3;">[</span><span>n</span><span style="color:#5fb3b3;">].</span><span style="color:#6699cc;">contigs</span><span style="color:#5fb3b3;">() </span><span style="color:#c594c5;">for </span><span>n </span><span style="color:#c594c5;">in </span><span style="color:#6699cc;">graphs</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">solve</span><span style="color:#5fb3b3;">()}
+</span><span>
+</span><span style="color:#5f6364;"># Output contig files in fasta format
+</span><span style="color:#c594c5;">for </span><span>n</span><span style="color:#5fb3b3;">, </span><span>contig_group </span><span style="color:#c594c5;">in </span><span style="color:#6699cc;">contigs</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">items</span><span style="color:#5fb3b3;">():
+</span><span>    </span><span style="color:#c594c5;">with </span><span style="color:#6699cc;">open</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">contigs-</span><span style="color:#5fb3b3;">{</span><span style="color:#99c794;">n</span><span style="color:#5fb3b3;">}</span><span style="color:#99c794;">.fa</span><span style="color:#5fb3b3;">&quot;, &quot;</span><span style="color:#99c794;">w</span><span style="color:#5fb3b3;">&quot;) </span><span style="color:#c594c5;">as </span><span>handle</span><span style="color:#5fb3b3;">:
+</span><span>        </span><span style="color:#c594c5;">for </span><span>contig </span><span style="color:#c594c5;">in </span><span>contig_group</span><span style="color:#5fb3b3;">:
+</span><span>            </span><span style="color:#6699cc;">handle</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">write</span><span style="color:#5fb3b3;">(</span><span style="color:#6699cc;">contig</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">fasta</span><span style="color:#5fb3b3;">())
+</span></code></pre>
+<p><em>or something like that...</em></p>
+<h2 id="voila">Voila!</h2>
+<p>This is a super over-simplified example but it illustrates the idea.</p>
+<p>The user was able to craft a complex bioinformatics application with very little
+code without having to implement the underlying bioinformatics algorithms, just
+customize them.</p>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr/>
+      (c) 2011-2023 Austin G. Davis-Richardson
+      <br/>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+  <script type="text/javascript">
+   const canvas = document.getElementById('the-canvas');
+   const ctx = canvas.getContext('2d');
+
+   const rows = 10;
+   const columns = 10;
+   const squareSize = 480 / 100;
+
+   function getRandomColor() {
+       const letters = '0123456789ABCDEF';
+       let color = '#';
+       for (let i = 0; i < 6; i++) {
+           color += letters[Math.floor(Math.random() * 16)];
+       }
+       return color;
+   }
+
+   function drawGrid(color) {
+     for (let i = 0; i < rows; i++) {
+         for (let j = 0; j < columns; j++) {
+             ctx.beginPath();
+             ctx.fillStyle = color || getRandomColor();
+             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+             ctx.stroke();
+         }
+     }
+   }
+
+   canvas.addEventListener('click', (event) => {
+       const x = event.offsetX;
+       const y = event.offsetY;
+
+       const columnIndex = Math.floor(x / squareSize);
+       const rowIndex = Math.floor(y / squareSize);
+
+       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
+       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
+
+       drawGrid();
+
+       document.documentElement.style.setProperty('--link-color', colorClickedHex);
+   });
+   drawGrid();
+ </script>
+
+</body>
+</html>
