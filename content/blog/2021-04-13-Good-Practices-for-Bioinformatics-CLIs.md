@@ -95,7 +95,7 @@ subprocess.call(["ls", "--not-a-real-argument"])
 running external commands. For more advanced features such as reading from
 standard out or standard error, see `subprocess.Popen`.
 
-# Automatically Generated Output Filenames
+# Avoid: Automatically Generated Output Filenames
 
 Many tools I've encountered will automatically generate the paths to output
 file(s). This is done to help the user. Who wants to manually specify the
@@ -161,7 +161,7 @@ wc -l results.csv
 *tl;dr* while it might appear that automatically generating output filenames
 makes a user's life easier; it ends up adding work down the road.
 
-# Automatically Self-Updating Code / Data
+# Avoid: Automatically Self-Updating Code / Data
 
 Tools that use an external database sometimes check to see if the local copy of
 that database is up-to-date and will automatically check for and download a
