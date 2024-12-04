@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    /* Default styles for all screen sizes */
+
+    html, body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-family: "Consolas", monospace;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    :not(pre) > code {
+      border-radius: 4px;
+      padding: 1px;
+      background-color: #eee;
+      font-style: italic;
+      font-family: "Consolas", monospace;
+    }
+
+    .blog-description li {
+      margin-bottom: 30px;
+    }
+
+    .no-dots li {
+      list-style: none;
+    }
+
+    :root {
+        --link-color: black;
+    }
+
+    a {
+        color: var(--link-color);
+        font-weight: bold;
+    }
+
+    hr {
+      color: #fff;
+      background-color: var(--link-color);
+    }
+
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      font-family: "Consolas", monospace;
+      white-space: pre-wrap; /* Allow text to wrap on small screens */
+    }
+
+    .dimmed {
+      color: #777;
+    }
+
+    /* Media query for smaller screens (e.g., mobile phones) */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px; /* Adjust padding as needed for smaller screens */
+      }
+
+      pre {
+        padding: 8px; /* Adjust padding as needed for smaller screens */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="header">
+    <h1>
+      <canvas id="the-canvas" width=50 height=50>
+      </canvas>
+      <span id="title">agdr.org</span>
+    </h1>
+  </div>
+  <hr/>
+
+  <div>
+    
+
+<a href="/">&lt; Back</a>
+
+<h1 class="title">
+  Illumina Obscura
+</h1>
+
+<p class="subtitle dimmed">2011-05-04</p>
+
+
+<h2 id="i-took-a-picture-of-an-illumina-plate-using-qseq-files">I took a picture of an Illumina plate (using QSEQ files)</h2>
+<p>Illumina sequencer output (QSEQ format) contains reads, quality scores and the
+X/Y coordinates from the cluster they came from.</p>
+<p>I was curious if certain parts of an Illumina plate have lower quality reads
+than others. So, I decided to draw a map of an Illumina plate using these
+coordinates and the average quality score for that read.</p>
+<p>In the first image, a white pixel corresponds to the presence of a sequence at
+a coordinate:</p>
+<p><img src="/images/illumina1.png" alt="Black and White Illumina Photograph" title="Illumina1" /></p>
+<p>You can see a subtle border between the eight lanes but not much else.</p>
+<p>In the second image, I used two colors: Green for average quality scores above
+99% (good) and Red for below (bad). This way, approximately half of the
+clusters are red and half are green.</p>
+<p>Second image, in color:</p>
+<p><img src="/images/illumina2.png" alt="Color Illumina Photograph" title="Illumina2" /></p>
+<p>I did this using the Python Image Library and Python.  You can see the
+<a href="https://gist.github.com/955875">code</a> on GitHub.</p>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr/>
+      (c) 2011-2023 Austin G. Davis-Richardson
+      <br/>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+  <script type="text/javascript">
+   const canvas = document.getElementById('the-canvas');
+   const ctx = canvas.getContext('2d');
+
+   const rows = 10;
+   const columns = 10;
+   const squareSize = 480 / 100;
+
+   function getRandomColor() {
+       const letters = '0123456789ABCDEF';
+       let color = '#';
+       for (let i = 0; i < 6; i++) {
+           color += letters[Math.floor(Math.random() * 16)];
+       }
+       return color;
+   }
+
+   function drawGrid(color) {
+     for (let i = 0; i < rows; i++) {
+         for (let j = 0; j < columns; j++) {
+             ctx.beginPath();
+             ctx.fillStyle = color || getRandomColor();
+             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+             ctx.stroke();
+         }
+     }
+   }
+
+   canvas.addEventListener('click', (event) => {
+       const x = event.offsetX;
+       const y = event.offsetY;
+
+       const columnIndex = Math.floor(x / squareSize);
+       const rowIndex = Math.floor(y / squareSize);
+
+       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
+       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
+
+       drawGrid();
+
+       document.documentElement.style.setProperty('--link-color', colorClickedHex);
+   });
+   drawGrid();
+ </script>
+
+</body>
+</html>

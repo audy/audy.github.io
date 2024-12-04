@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title></title>
+    <link href="https://agdr.org/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://agdr.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2021-04-13T00:00:00+00:00</updated>
+    <id>https://agdr.org/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Good Practices for Bioinformatics CLIs</title>
+        <published>2021-04-13T00:00:00+00:00</published>
+        <updated>2021-04-13T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/good-practices-for-bioinformatics-clis/" type="text/html"/>
+        <id>https://agdr.org/blog/good-practices-for-bioinformatics-clis/</id>
+        
+        <content type="html">&lt;h1 id=&quot;scenario&quot;&gt;Scenario&lt;&#x2F;h1&gt;
+&lt;p&gt;You&#x27;re the author of an important bioinformatics program that can accurately
+predict some biologically-meaningful properties. The scientific community would
+like to use your program as part of a larger pipeline. However, some common
+follies &#x2F; design decisions in bioinformatics software can make that job
+difficult:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Running External Programs&lt;&#x2F;li&gt;
+&lt;li&gt;Too Much Magic #1: Automatic Filename(s)&lt;&#x2F;li&gt;
+&lt;li&gt;Too Much Magic #2: Automatic Updates&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h1 id=&quot;running-external-programs&quot;&gt;Running External Programs&lt;&#x2F;h1&gt;
+&lt;p&gt;This section is dedicated to the countless hours I have spent debugging tools
+which execute an external process but do not produce an error if that external
+process fails for some reason.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;avoid-os-system&quot;&gt;Avoid &lt;code&gt;os.system&lt;&#x2F;code&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;code&gt;os.system&lt;&#x2F;code&gt; is the shortest to type method for running an external program but
+commonly causes bugs due to the fact that if the command fails, the Python
+program will continue to execute as if nothing happened, sometimes without
+noticing.&lt;&#x2F;p&gt;
+&lt;p&gt;This example shows what happens if you run a command that fails with
+&lt;code&gt;os.system&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;os
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;generating myfile.txt using nonsense.exe&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;exit_code &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;os&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;system&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;nonsense.exe --output myfile.txt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;finished generating myfile.txt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;assert &lt;&#x2F;span&gt;&lt;span&gt;exit_code &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;You *can* make sure that the program succeeded, but people often forget&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Any downstream code that assumes &lt;code&gt;myfile.txt&lt;&#x2F;code&gt; exists will now break. Also,
+because &lt;code&gt;os.system&lt;&#x2F;code&gt; did not raise an exception, it becomes more difficult to
+find out the reason why &lt;code&gt;myfile.txt&lt;&#x2F;code&gt; does not exist.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;subprocess.call&lt;&#x2F;code&gt; is a little better because it will fail if &lt;code&gt;nonsense.exe&lt;&#x2F;code&gt;
+does not exist. However, if you try to run a real command but it fails, the
+script continues as if nothing bad happened:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;subprocess
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# the script would crash here
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;subprocess&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;call&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;([&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;nonsense&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;output.txt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;])
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;exit_code &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;subprocess&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;call&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;([&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;ls&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;--not-a-real-argument&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;])
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;finished running ls&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;assert &lt;&#x2F;span&gt;&lt;span&gt;exit_code &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;You *can* make sure that the program succeeded, but people often forget&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;If you really wanted to make this safe, you&#x27;d have to do the following:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;try&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    exit_code &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;subprocess&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;call&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;([&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;ls&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;--not-a-real-argument&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;])
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;except &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;FileNotFoundError&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;program does not exist&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;finally&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;assert &lt;&#x2F;span&gt;&lt;span&gt;exit_code &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;Program did not exit successfully&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;But that involves a lot more typing than simply using &lt;code&gt;subprocess.check_output&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# works
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;subprocess&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;call&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;([&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;ls&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;])
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# FileNotFoundError
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;subprocess&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;check_output&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;([&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;notacommand&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;])
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# subprocess.CalledProcessError
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;subprocess&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;call&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;([&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;ls&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;--not-a-real-argument&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;])
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;em&gt;tl;dr&lt;&#x2F;em&gt; It&#x27;s safest and easiest to just use &lt;code&gt;subprocess.check_output&lt;&#x2F;code&gt; for
+running external commands. For more advanced features such as reading from
+standard out or standard error, see &lt;code&gt;subprocess.Popen&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;avoid-automatically-generated-output-filenames&quot;&gt;Avoid: Automatically Generated Output Filenames&lt;&#x2F;h1&gt;
+&lt;p&gt;Many tools I&#x27;ve encountered will automatically generate the paths to output
+file(s). This is done to help the user. Who wants to manually specify the
+output filename especially if there are more than one? This usually causes
+issues down the line when a user tries to run a program using another program
+as it adds work to guess the path to the output file(s).&lt;&#x2F;p&gt;
+&lt;p&gt;For example, many tools use the input filename as the prefix to all of the
+outputs.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; sample123.fastq
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;ls
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# sample123.fastq sample123.results.csv
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Let&#x27;s say the user now wants to count how many lines there are in the output.
+They now have to write additional code to generate the output file path&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample123.fastq
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; sample123.fastq
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;results_path&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;basename &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;${&lt;&#x2F;span&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; .fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;.results.csv
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Consider a user wrapping this tool in a script:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample123.fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;${&lt;&#x2F;span&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;ls
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# sample123.fastq.results-20210513.csv
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Let&#x27;s say the user now wants to count how many lines there are in the output.
+The code needed to figure out the output path starts to become more complicated
+and brittle due to &lt;code&gt;mytool&lt;&#x2F;code&gt; and the wrapping script having to implement
+formatting the date in the exact same way:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample123.fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;${&lt;&#x2F;span&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;output_path&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample123.fastq.results-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;date +&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;Y&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;m&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;d&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;.csv&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;wc&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;l &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;${&lt;&#x2F;span&gt;&lt;span&gt;output_path&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;}&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;If you allow the user to provide the output path(s) as arguments, the script
+becomes much simpler:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span&gt;input_filename&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample123.fastq
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; sample123.fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;output&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; results.csv
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;wc&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;l&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; results.csv
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;em&gt;tl;dr&lt;&#x2F;em&gt; while it might appear that automatically generating output filenames
+makes a user&#x27;s life easier; it ends up adding work down the road.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;avoid-automatically-self-updating-code-data&quot;&gt;Avoid: Automatically Self-Updating Code &#x2F; Data&lt;&#x2F;h1&gt;
+&lt;p&gt;Tools that use an external database sometimes check to see if the local copy of
+that database is up-to-date and will automatically check for and download a
+newer version from the internet if available.&lt;&#x2F;p&gt;
+&lt;p&gt;While it is often important to have an up-to-date copy of a database this
+breaks reproducibility and can lead to failures if the server hosting the
+database goes offline. When creating robust bioinformatics tools, being able to
+produce a result reproducibly is more important than unintentially changing the
+output because an external database has been updated.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# bad
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;$ mytool&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; sample123.fastq
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# mytool: checking for updates
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# mytool: found newer database... downloading
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;sample123.fastq.results.csv &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# &amp;lt;- no longer reproducible result
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;As an alternative, I recommend not automatically updating and instead provide a
+command to update the database. Then I have control over when the database is
+updated and can keep copies of multiple versions if necessary:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool update-database&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;output&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; database.fasta
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;mytool run-analysis&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; sample123.fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;database&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; database.fasta
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Polyglot Makefiles</title>
+        <published>2020-05-14T00:00:00+00:00</published>
+        <updated>2020-05-14T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/polyglot-makefiles/" type="text/html"/>
+        <id>https://agdr.org/blog/polyglot-makefiles/</id>
+        
+        <content type="html">&lt;p&gt;Did you know that you can change the shell in a &lt;code&gt;Makefile&lt;&#x2F;code&gt;? It&#x27;s true. I found
+this out when trying to use bash instead of the default &lt;code&gt;&#x2F;bin&#x2F;sh&lt;&#x2F;code&gt; by setting
+&lt;code&gt;SHELL&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.ONESHELL&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bash&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;bash
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bash&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# note: the double dollar-sign is required because Make substitues $variables
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;export &lt;&#x2F;span&gt;&lt;span&gt;greeting&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;¡hola&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$${&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;greeting&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;, bash!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now typing &lt;code&gt;make bash&lt;&#x2F;code&gt; will print &lt;code&gt;¡hola, bash!&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;What else is possible? Can I use other programming languages as the shell?  Is
+it possible to write in-line Python in a &lt;code&gt;Makefile&lt;&#x2F;code&gt;?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;python&quot;&gt;Python&lt;&#x2F;h2&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.ONESHELL&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;python3
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;greeting = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;hello&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;print(f&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;{greeting}, python!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=BtyjaSqdh2I&quot;&gt;Yes, this is possible&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Typing &lt;code&gt;make python&lt;&#x2F;code&gt; will print &lt;code&gt;hello, python!&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Notice that there is a variable &lt;code&gt;.ONESHELL&lt;&#x2F;code&gt; being set. Normally, &lt;code&gt;make&lt;&#x2F;code&gt; will
+evaluate each command in a separate shell meaning that, in this example,
+&lt;code&gt;greeting&lt;&#x2F;code&gt; would be undefined in the second line. Adding &lt;code&gt;.ONESHELL&lt;&#x2F;code&gt; to the top
+of your &lt;code&gt;Makefile&lt;&#x2F;code&gt;, as recommended by &lt;a href=&quot;https:&#x2F;&#x2F;tech.davis-hansson.com&#x2F;p&#x2F;make&#x2F;&quot;&gt;someone else whose last name begins with
+Davis-* and blogs about &lt;code&gt;make&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;,
+causes multi-line code in the Make directive to be evaluated in a single call
+to Python.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;r&quot;&gt;R&lt;&#x2F;h2&gt;
+&lt;p&gt;What about writing R in-line in a Makefile? Note the addition of &lt;code&gt;.SHELLFLAGS&lt;&#x2F;code&gt;.
+By default, &lt;code&gt;make&lt;&#x2F;code&gt; runs &lt;code&gt;SHELL -c &amp;quot;your\nscript\nhere&amp;quot;&lt;&#x2F;code&gt; which is not compatible
+R. To run a script in-line from a command in R, you use &lt;code&gt;-e&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; .SHELLFLAGS &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;-e
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;Rscript
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;greeting = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;bonjour&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;message(paste0(greeting, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;, R!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;))
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This is equivalent to running &lt;code&gt;Rscript -e &#x27;greeting = &amp;quot;bounjour&amp;quot;; message(paste0(greeting, &amp;quot;, R!&amp;quot;));&#x27;&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now you can write a pipeline that combines R and Python in a single file 🎉&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bring-in-the-containers&quot;&gt;Bring in the containers&lt;&#x2F;h2&gt;
+&lt;p&gt;Data analysis pipelines often have
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;thackl&#x2F;gggenomes#motivation--concept&quot;&gt;adventurous&lt;&#x2F;a&gt;
+dependencies. Docker made all of that a lot easier but writing &lt;code&gt;docker run ...&lt;&#x2F;code&gt;
+can be cumbersome. What if we could make Docker the interpreter and write
+commands to be executed inside the container in-line as well?&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; .SHELLFLAGS = run --volume &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;shell pwd&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&#x2F;workdir --rm --workdir &#x2F;workdir --entrypoint &#x2F;bin&#x2F;bash ubuntu -c
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;docker
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;hello, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;uname -a&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Again, this is possible. Running &lt;code&gt;make docker&lt;&#x2F;code&gt; will run &lt;code&gt;echo ...&lt;&#x2F;code&gt; in a Docker
+container running Ubuntu. Note the &lt;code&gt;--volume&lt;&#x2F;code&gt; flag which will mount the current
+working directory as the container&#x27;s working directory meaning that files can
+be read&#x2F;created between your local filesystem and that of the container. So
+build artifacts can be shared between make directives.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b2c2f;color:#cccece;&quot;&gt;&lt;code&gt;&lt;span&gt;hello, Linux 453c728113d6 4.19.76-linuxkit #1 SMP Fri Apr 3 15:53:26 UTC 2020 x86_64 x86_64 x86_64 GNU&#x2F;Linux!
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;why&quot;&gt;Why?&lt;&#x2F;h2&gt;
+&lt;p&gt;This started as an experiment to see what is possible with &lt;code&gt;make&lt;&#x2F;code&gt;. But it was
+motivated by a real world problem: I often need to combine tools across
+programming languages and environments to run data analysis pipelines. I like
+to automate things and &lt;code&gt;make&lt;&#x2F;code&gt; is a great tool for doing so. Having everything
+in-line is more readable and having everything in a single file means that I
+have to jump between fewer tabs to understand the pipeline itself.&lt;&#x2F;p&gt;
+&lt;p&gt;The ability to write commands that get executed in Docker means that I have to
+spend less time figuring out how to get a bunch of dependencies installed in a
+single container which becomes increasingly difficult as the number of
+dependencies increases (especially if you work in Bioinformatics).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;full-makefile&quot;&gt;Full Makefile&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;note&lt;&#x2F;strong&gt;: Some of these features only work on &lt;code&gt;make 4.+&lt;&#x2F;code&gt; which I installed
+using &lt;a href=&quot;https:&#x2F;&#x2F;brew.sh&quot;&gt;Homebrew&lt;&#x2F;a&gt;. These examples do not work using &lt;code&gt;make 3.x&lt;&#x2F;code&gt;
+which is comes with macOS Catalina.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.ONESHELL&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.SILENT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: \
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;	python &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;	ruby &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;	R &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;	bash &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;\
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;	docker
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; .SHELLFLAGS &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;run --rm --entrypoint &#x2F;bin&#x2F;bash ubuntu -c
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;docker
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;hello, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;uname -a&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;python3
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;greeting = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;hello&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;print(f&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;{greeting}, python!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;ruby&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; .SHELLFLAGS &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;-e
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;ruby&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;ruby
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;ruby&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;greeting = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;labas&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;puts &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;#{greeting}, ruby!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; .SHELLFLAGS &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;-e
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;Rscript
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;greeting = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;bonjour&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;message(paste0(greeting, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;, R!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;))
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bash&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; .SHELLFLAGS &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;-euo pipefail -c
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bash&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; SHELL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;bash
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bash&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;export &lt;&#x2F;span&gt;&lt;span&gt;greeting&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;¡hola&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;echo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$${&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;greeting&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;, bash!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Other Sites</title>
+        <published>2016-06-29T00:00:00+00:00</published>
+        <updated>2016-06-29T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/other-sites/" type="text/html"/>
+        <id>https://agdr.org/blog/other-sites/</id>
+        
+        <content type="html">&lt;p&gt;Other websites I&#x27;ve made and sometimes maintain in my free time:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;foto.austinfanclub.com&quot;&gt;foto&lt;&#x2F;a&gt; - Photographs.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;mailcrow.com&quot;&gt;MailCrow&lt;&#x2F;a&gt; - An escrow service for your email identity.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;genomes.austinfanclub.com&quot;&gt;Genome Explorer&lt;&#x2F;a&gt; - A social
+network for microbes. Part of my PhD thesis. &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;audy&#x2F;genome-explorer&quot;&gt;Source
+Code&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;painting.austinfanclub.com&quot;&gt;Le Painting&lt;&#x2F;a&gt; - Social drawing website
+that lets you &amp;quot;fork&amp;quot; other peoples&#x27; drawings and modify them.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;tilde.town&#x2F;~audy&quot;&gt;tilde.town&#x2F;~audy&lt;&#x2F;a&gt; - My presence in the
+&lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;message&#x2F;tilde-club-i-had-a-couple-drinks-and-woke-up-with-1-000-nerds-a8904f0a2ebf#.2b3hyan15&quot;&gt;tilde&lt;&#x2F;a&gt;
+community.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Bots</title>
+        <published>2016-06-14T00:00:00+00:00</published>
+        <updated>2016-06-14T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/bots/" type="text/html"/>
+        <id>https://agdr.org/blog/bots/</id>
+        
+        <content type="html">&lt;p&gt;I really like bots. Here&#x27;s a list of Twitter bots I&#x27;ve made:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;new_taxonomies&quot;&gt;@new_taxonomies&lt;&#x2F;a&gt; - tweets whenever there is an
+update to the NCBI taxonomy database&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;gvillejunk&quot;&gt;@gvillejunk&lt;&#x2F;a&gt; - items posted to the
+Gainesville, FL Craigslist &amp;quot;free&amp;quot; section.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;hmmdarwin&quot;&gt;@hmmdarwin&lt;&#x2F;a&gt; - Markov bot trained on the major
+works of Charles Darwin.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;meowhector&quot;&gt;@meowhector&lt;&#x2F;a&gt; - Bot about my cat.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;cappstories&quot;&gt;@cappstories&lt;&#x2F;a&gt; - True stories from Capp
+St., SF. Made using &lt;a href=&quot;http:&#x2F;&#x2F;cheapbotsdonequick.com&#x2F;&quot;&gt;Cheap Bots Done Quick&lt;&#x2F;a&gt;
+and &lt;a href=&quot;http:&#x2F;&#x2F;www.crystalcodepalace.com&#x2F;traceryTut.html#&quot;&gt;Tracery&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;pizza_dolores&quot;&gt;@pizza_dolores&lt;&#x2F;a&gt; - in dedication to my
+favorite Dolores Park vendor.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;every_omics&quot;&gt;@every_omics&lt;&#x2F;a&gt; - Random &#x27;Omicses&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;I also maintain a list of bots and add to it whenever I find a new one. As of
+this writing, there are 3.9K bots:
+&lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;heyaudy&#x2F;lists&#x2F;bots&quot;&gt;https:&#x2F;&#x2F;twitter.com&#x2F;heyaudy&#x2F;lists&#x2F;bots&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;If you want to make your own Twitter bot, I recommend
+https:&#x2F;&#x2F;cheapbotsdonequick.com&#x2F; which lets you create one using a generative
+grammar which sounds complicated but it&#x27;s is really just writing a&amp;quot;choose your
+own adventure&amp;quot; novel using JSON.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>RMarkdown &amp; Continuous Integration</title>
+        <published>2015-01-13T00:00:00+00:00</published>
+        <updated>2015-01-13T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/rmarkdown-continuous-integration/" type="text/html"/>
+        <id>https://agdr.org/blog/rmarkdown-continuous-integration/</id>
+        
+        <content type="html">&lt;p&gt;In my &lt;a href=&quot;http:&#x2F;&#x2F;agdr.org&#x2F;2015&#x2F;01&#x2F;13&#x2F;RMarkdown-+-Continuous-Integration.html&quot;&gt;previous
+post&lt;&#x2F;a&gt;, I
+wrote about writing a &lt;code&gt;Makefile&lt;&#x2F;code&gt; to render &lt;code&gt;.Rmd&lt;&#x2F;code&gt; files to &lt;code&gt;pdf&lt;&#x2F;code&gt; (or &lt;code&gt;html&lt;&#x2F;code&gt;)
+automatically.&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;ve been playing around with using continuous integration for scientific
+analysis using &lt;a href=&quot;https:&#x2F;&#x2F;travis-ci.com&quot;&gt;Travis-CI&lt;&#x2F;a&gt;, RMarkdown and GitHub. This
+way, whenever I perform a &lt;code&gt;git push&lt;&#x2F;code&gt; to GitHub, Travis-CI will pull down the
+latest code and run it. Since in this case, the &amp;quot;code&amp;quot; consists of RMarkdown
+files containing my analyses, Travis-CI will re-run my analyses every time I
+update the code. This can be useful for checking that my code works but, more
+importantly, preserving a record of &lt;em&gt;how&lt;&#x2F;em&gt; to run the analysis code, and
+notifying me when something breaks.&lt;&#x2F;p&gt;
+&lt;p&gt;I added continuous integration using &lt;a href=&quot;https:&#x2F;&#x2F;travis-ci.com&quot;&gt;Travis-CI&lt;&#x2F;a&gt; to my
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;audy&#x2F;make-rmarkdown&quot;&gt;Make + RMarkdown example&lt;&#x2F;a&gt;. When GitHub
+receives a &lt;code&gt;git push&lt;&#x2F;code&gt;, Travis will clone the repository and run &lt;code&gt;make&lt;&#x2F;code&gt; which
+will build all RMarkdown files and notify you of any failures.&lt;&#x2F;p&gt;
+&lt;p&gt;This could also be used to build RMarkdown files automatically if the output
+could somehow be sent elsewhere. One way to do this would be to send them to a
+remote machine using secure-copy or FTP.&lt;&#x2F;p&gt;
+&lt;p&gt;This configuration does not handle dependency management. I added a script to
+install dependencies but this is less than ideal. R has really only one good
+solution for package management called
+&lt;a href=&quot;https:&#x2F;&#x2F;rstudio.github.io&#x2F;packrat&#x2F;&quot;&gt;Packrat&lt;&#x2F;a&gt;. Packrat requires all dependencies
+to be tracked in Git. I&#x27;m not a fan of &amp;quot;vendoring&amp;quot; all dependencies and this
+could lead to licensing issues if you publish your code under MIT (many R
+libraries are GPL) but Packrat has at least been reliable in my experience.&lt;&#x2F;p&gt;
+&lt;p&gt;See &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;audy&#x2F;make-rmarkdown&#x2F;blob&#x2F;master&#x2F;.travis.yml&quot;&gt;&lt;code&gt;.travis.yml&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>RMarkdown + Make</title>
+        <published>2014-12-22T00:00:00+00:00</published>
+        <updated>2014-12-22T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/rmarkdown-make/" type="text/html"/>
+        <id>https://agdr.org/blog/rmarkdown-make/</id>
+        
+        <content type="html">&lt;p&gt;Lately, I&#x27;ve been using Rmarkdown + Make to perform statistical analysis and
+generate reports.&lt;&#x2F;p&gt;
+&lt;p&gt;I saw Shaun Jackman&#x27;s slideshow &amp;quot;&lt;a href=&quot;https:&#x2F;&#x2F;sjackman.github.io&#x2F;open-science&#x2F;#&#x2F;open-reproducible-science&quot;&gt;Open, reproducible science using Make,
+RMarkdown and Pandoc&lt;&#x2F;a&gt;&amp;quot; and thought it was lacking a key example: how do you
+use Make to generate reports from RMarkdown files? So I put together a &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;audy&#x2F;knitr-make&quot;&gt;little
+recipe&lt;&#x2F;a&gt; for doing just that. It is a basic project directory structure and a
+tiny Makefile that automatically renders Rmarkdown files to HTML.&lt;&#x2F;p&gt;
+&lt;p&gt;In the example repo, there is a &lt;code&gt;Makefile&lt;&#x2F;code&gt; which defines a couple of rules for
+converting &lt;code&gt;.md&lt;&#x2F;code&gt; files into &lt;code&gt;.pdf&lt;&#x2F;code&gt; and &lt;code&gt;.html&lt;&#x2F;code&gt; files:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;.Rmd
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;Rscript&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;e &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;rmarkdown::render(&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;$&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;&amp;#39;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.pdf&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;.Rmd
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;@&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;Rscript&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;e &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;rmarkdown::render(&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;$&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;&amp;#39;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;After adding this to your &lt;code&gt;Makefile&lt;&#x2F;code&gt; you can type &lt;code&gt;make my-analysis.pdf&lt;&#x2F;code&gt; to
+render &lt;code&gt;my-analysis.md&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;To automatically convert all &lt;code&gt;.md&lt;&#x2F;code&gt; files to &lt;code&gt;.pdf&lt;&#x2F;code&gt;, add the following lines
+which will create a target &lt;code&gt;.pdf&lt;&#x2F;code&gt; file for all of the &lt;code&gt;.Rmd&lt;&#x2F;code&gt; files in the
+current working directory:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;makefile&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-makefile &quot;&gt;&lt;code class=&quot;language-makefile&quot; data-lang=&quot;makefile&quot;&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# define targets
+&lt;&#x2F;span&gt;&lt;span&gt;SOURCES&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;shell find notebooks&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;.Rmd&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;TARGETS&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;SOURCES&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;.Rmd&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ec5f67;&quot;&gt;%&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;.pdf&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;default&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;TARGETS&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# type `make clean` to delete all of the target PDFs
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;clean&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;	&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;rm&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt; -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;rf &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;TARGETS&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Git Dropbox with Gitreceive</title>
+        <published>2014-10-24T00:00:00+00:00</published>
+        <updated>2014-10-24T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/git-box/" type="text/html"/>
+        <id>https://agdr.org/blog/git-box/</id>
+        
+        <content type="html">&lt;h2 id=&quot;how-to-setup-a-server-that-will-automatically-receive-and-save-anything-you-git-push-to-it&quot;&gt;How to setup a server that will automatically receive and save anything you &lt;code&gt;git push&lt;&#x2F;code&gt; to it.&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted to host my git repositories on a private server but didn&#x27;t want to
+setup something big like Gitlab or Gitorious to do it. I also wanted to be able
+to &lt;code&gt;git push&lt;&#x2F;code&gt; anything and have the server automatically create a new git
+repository and store the data.&lt;&#x2F;p&gt;
+&lt;p&gt;The easiest way I found to do this was to use
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;progrium&#x2F;gitreceive&quot;&gt;gitreceive&lt;&#x2F;a&gt; by &lt;a href=&quot;http:&#x2F;&#x2F;progrium.com&#x2F;blog&#x2F;&quot;&gt;Jeff
+Lindsay&lt;&#x2F;a&gt; who created
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;progrium&#x2F;gitreceive&quot;&gt;Dokku&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;I followed the instructions for setting up gitreceive but ran into a small
+hangup when trying to push a repository:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b2c2f;color:#cccece;&quot;&gt;&lt;code&gt;&lt;span&gt;$ gp home master
+&lt;&#x2F;span&gt;&lt;span&gt;Counting objects: 1032, done.
+&lt;&#x2F;span&gt;&lt;span&gt;Delta compression using up to 4 threads.
+&lt;&#x2F;span&gt;&lt;span&gt;Compressing objects: 100% (1020&#x2F;1020), done.
+&lt;&#x2F;span&gt;&lt;span&gt;Writing objects: 100% (1032&#x2F;1032), 5.04 MiB | 1.20 MiB&#x2F;s, done.
+&lt;&#x2F;span&gt;&lt;span&gt;Total 1032 (delta 82), reused 0 (delta 0)
+&lt;&#x2F;span&gt;&lt;span&gt;To git@foo.co:bar
+&lt;&#x2F;span&gt;&lt;span&gt; ! [remote rejected] master -&amp;gt; master (pre-receive hook declined)
+&lt;&#x2F;span&gt;&lt;span&gt;error: failed to push some refs to &amp;#39;git@foo.co:bar&amp;#39;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The error &lt;code&gt;pre-receive hook declined&lt;&#x2F;code&gt; means that the receiver script that
+gitreceive installs to &lt;code&gt;&#x2F;home&#x2F;git&lt;&#x2F;code&gt; was crashing. However, the default receiver
+script does nothing which makes it odd that it would crash. The cause of the
+problem is that &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;progrium&#x2F;gitreceive&#x2F;blob&#x2F;ff8d03ec8d308f6dec8142b9c4e8518591d6e32f&#x2F;gitreceive#L115&quot;&gt;gitreceive is piping the output of &lt;code&gt;git archive&lt;&#x2F;code&gt; to the
+receiver
+script&lt;&#x2F;a&gt;.
+The receiver script does nothing so exits before &lt;code&gt;cat&lt;&#x2F;code&gt; cat finish. This causes
+&lt;code&gt;cat&lt;&#x2F;code&gt;, then gitreceive to crash with a non-zero exit status causing the
+&lt;code&gt;pre-receive hook declined&lt;&#x2F;code&gt; error.&lt;&#x2F;p&gt;
+&lt;p&gt;The solution to this is simple. Add the following line to the receiver script:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;cat &#x2F;dev&#x2F;stdin &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt; &#x2F;dev&#x2F;null
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This will wait for gitreceive to finish piping the archived repository before
+exiting. Now you can push a new repository and gitreceive will automatically
+create and receive it.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b2c2f;color:#cccece;&quot;&gt;&lt;code&gt;&lt;span&gt;git push home master
+&lt;&#x2F;span&gt;&lt;span&gt;Counting objects: 1032, done.  Delta compression using up to 4 threads.
+&lt;&#x2F;span&gt;&lt;span&gt;Compressing objects: 100% (1020&#x2F;1020), done.
+&lt;&#x2F;span&gt;&lt;span&gt;Writing objects: 100% (1032&#x2F;1032), 5.04 MiB | 1.20 MiB&#x2F;s, done.
+&lt;&#x2F;span&gt;&lt;span&gt;Total 1032 (delta 82), reused 0 (delta 0)
+&lt;&#x2F;span&gt;&lt;span&gt; __________________
+&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt; Have a nice day! &amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt; ------------------
+&lt;&#x2F;span&gt;&lt;span&gt;        \   ^__^
+&lt;&#x2F;span&gt;&lt;span&gt;         \  (oo)\_______
+&lt;&#x2F;span&gt;&lt;span&gt;            (__)\       )\&#x2F;\
+&lt;&#x2F;span&gt;&lt;span&gt;                ||----w |
+&lt;&#x2F;span&gt;&lt;span&gt;                ||     ||
+&lt;&#x2F;span&gt;&lt;span&gt;To git@foo.co:bar
+&lt;&#x2F;span&gt;&lt;span&gt;* [new branch]      master -&amp;gt; master
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Note: you do &lt;strong&gt;not&lt;&#x2F;strong&gt; need to save a copy of the archive that gitreceive is
+piping into the receiver script. The repository&#x27;s data is still being saved in
+&lt;code&gt;&#x2F;home&#x2F;git&#x2F;&amp;lt;reponame&amp;gt;&lt;&#x2F;code&gt;. You can verify this by running &lt;code&gt;git clone&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Compressive Sensing</title>
+        <published>2011-05-23T00:00:00+00:00</published>
+        <updated>2011-05-23T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/compressive-sensing/" type="text/html"/>
+        <id>https://agdr.org/blog/compressive-sensing/</id>
+        
+        <content type="html">&lt;h2 id=&quot;comparing-dna-sequences-using-gzip&quot;&gt;Comparing DNA sequences using &lt;code&gt;gzip&lt;&#x2F;code&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;I read something somewhere that described a simple data mining technique that
+used compression to determine if two strings are similar to each other. I can&#x27;t
+find that article now but I always wanted to try it. The method works by
+comparing the size of the compressed versions of the strings to the size of the
+strings if they are compressed together. If the strings are similar, the
+compressed size will be smaller than the sum of the compressed sizes for the
+individual strings. If not, it will be greater.&lt;&#x2F;p&gt;
+&lt;p&gt;For example, if you want to compare two strings to see if they are similar,
+first compress them separately and get the length of the compressed strings:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; compress&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;Austin&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;9
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; compress&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;Boston&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;8
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now compress them together:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; compress&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;AustinBoston&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;12
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;12 is still more than 9 but less than 17 (the sum of separately compressed
+sizes). So the strings must be similar.&lt;&#x2F;p&gt;
+&lt;p&gt;I wanted to see if this would work with querying DNA databases for similar
+genes, so I wrote a &lt;a href=&quot;https:&#x2F;&#x2F;agdr.org&#x2F;blog&#x2F;compressive-sensing&#x2F;#source&quot;&gt;little script&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;I did some quick testing on a 16S database and by golly it seems to work. Even
+with partial sequences. I would like to do some benchmarking to see how
+accurate it is.&lt;&#x2F;p&gt;
+&lt;p&gt;This isn&#x27;t really useful for searching a database as it still requires a
+one-to-one comparison of every sequence. However, gzip may be faster than
+Needleman-Wunsch (I couldn&#x27;t find the Big O for gzip). So, it could be used to
+get a similarity score in cases where you don&#x27;t need to see an actual
+alignment.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;source&quot;&gt;Source&lt;&#x2F;h2&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span&gt;LEVEL &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;9
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;database &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;ARGV&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;query &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;ARGV&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;require &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;zlib&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Compression function.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;deflate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;string&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   z &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Zlib&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Deflate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;LEVEL&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   dst &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; z&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;deflate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;string&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Zlib&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span&gt;FINISH&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;   z&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;close
+&lt;&#x2F;span&gt;&lt;span&gt;   dst
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Load entire database into memory.
+&lt;&#x2F;span&gt;&lt;span&gt;db &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;Hash&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;new
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;File&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;database&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;).&lt;&#x2F;span&gt;&lt;span&gt;read&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;split&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&#x2F;^&amp;gt;&#x2F;).&lt;&#x2F;span&gt;&lt;span&gt;each &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;do &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;|&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;record&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;next if&lt;&#x2F;span&gt;&lt;span&gt; record &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;== &amp;quot;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# split makes a blank one for some reason
+&lt;&#x2F;span&gt;&lt;span&gt;  record &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; record&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;split&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;\n&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;  header&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;,&lt;&#x2F;span&gt;&lt;span&gt; sequence &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; record&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;],&lt;&#x2F;span&gt;&lt;span&gt; record&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;..-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;  db&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span&gt;header&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;] =&lt;&#x2F;span&gt;&lt;span&gt; sequence&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;join&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;#39;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Read query sequence, and compress.
+&lt;&#x2F;span&gt;&lt;span&gt;query_sequence &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; \
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;File&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;query&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;).&lt;&#x2F;span&gt;&lt;span&gt;read&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;split&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&#x2F;^&amp;gt;&#x2F;)[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;].&lt;&#x2F;span&gt;&lt;span&gt;split&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;\n&amp;quot;)[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;..-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;].&lt;&#x2F;span&gt;&lt;span&gt;join&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;#39;&amp;#39;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# :D
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Find database sequence is greatest reduction in size
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;query&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;query&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;db&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;  query_size &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; deflate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;query&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;).&lt;&#x2F;span&gt;&lt;span&gt;length
+&lt;&#x2F;span&gt;&lt;span&gt;  best&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;,&lt;&#x2F;span&gt;&lt;span&gt; winner &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &amp;#39;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  db&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;each &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;do &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;|&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;k&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;seq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Compress DB sequence
+&lt;&#x2F;span&gt;&lt;span&gt;    solo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; deflate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;seq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;).&lt;&#x2F;span&gt;&lt;span&gt;length
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Compress both, together
+&lt;&#x2F;span&gt;&lt;span&gt;    together &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; deflate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;seq &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;+&lt;&#x2F;span&gt;&lt;span&gt; query&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;).&lt;&#x2F;span&gt;&lt;span&gt;length
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Score
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; together &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;lt; (&lt;&#x2F;span&gt;&lt;span&gt;solo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;+&lt;&#x2F;span&gt;&lt;span&gt; query_size&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;      score &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= (&lt;&#x2F;span&gt;&lt;span&gt;solo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;+&lt;&#x2F;span&gt;&lt;span&gt; query_size &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt; together&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;seq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;length&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;to_f &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Normalize by subject length
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; score &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; best
+&lt;&#x2F;span&gt;&lt;span&gt;        best &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; score
+&lt;&#x2F;span&gt;&lt;span&gt;        winner &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; k
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;{:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;score &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; best&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, :&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;hit &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; winner&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;result &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; query&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span&gt;query_sequence&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;,&lt;&#x2F;span&gt;&lt;span&gt; db&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;puts&lt;&#x2F;span&gt;&lt;span&gt; result&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;hit&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;]
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Illumina Obscura</title>
+        <published>2011-05-04T00:00:00+00:00</published>
+        <updated>2011-05-04T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/illumina/" type="text/html"/>
+        <id>https://agdr.org/blog/illumina/</id>
+        
+        <content type="html">&lt;h2 id=&quot;i-took-a-picture-of-an-illumina-plate-using-qseq-files&quot;&gt;I took a picture of an Illumina plate (using QSEQ files)&lt;&#x2F;h2&gt;
+&lt;p&gt;Illumina sequencer output (QSEQ format) contains reads, quality scores and the
+X&#x2F;Y coordinates from the cluster they came from.&lt;&#x2F;p&gt;
+&lt;p&gt;I was curious if certain parts of an Illumina plate have lower quality reads
+than others. So, I decided to draw a map of an Illumina plate using these
+coordinates and the average quality score for that read.&lt;&#x2F;p&gt;
+&lt;p&gt;In the first image, a white pixel corresponds to the presence of a sequence at
+a coordinate:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;illumina1.png&quot; alt=&quot;Black and White Illumina Photograph&quot; title=&quot;Illumina1&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;You can see a subtle border between the eight lanes but not much else.&lt;&#x2F;p&gt;
+&lt;p&gt;In the second image, I used two colors: Green for average quality scores above
+99% (good) and Red for below (bad). This way, approximately half of the
+clusters are red and half are green.&lt;&#x2F;p&gt;
+&lt;p&gt;Second image, in color:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;illumina2.png&quot; alt=&quot;Color Illumina Photograph&quot; title=&quot;Illumina2&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I did this using the Python Image Library and Python.  You can see the
+&lt;a href=&quot;https:&#x2F;&#x2F;gist.github.com&#x2F;955875&quot;&gt;code&lt;&#x2F;a&gt; on GitHub.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>S3&#x2F;Ruby</title>
+        <published>2011-04-08T00:00:00+00:00</published>
+        <updated>2011-04-08T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/s3/" type="text/html"/>
+        <id>https://agdr.org/blog/s3/</id>
+        
+        <content type="html">&lt;p&gt;I haven&#x27;t written a blog post since I made a blog so I decided that I&#x27;m going to
+always write a blog post on Friday even if I have nothing to write about.&lt;&#x2F;p&gt;
+&lt;p&gt;This week: an awesome script.&lt;&#x2F;p&gt;
+&lt;p&gt;This little snippet of ruby (combined with the S3 gem) will print a random
+number to a file, upload the file to S3, and return the URL.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span&gt;KEY &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;KEY&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;SECRET &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;SECRET&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;require &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;aws&#x2F;s3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;AWS&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;S3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Base&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;establish_connection!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;access_key_id &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt; &lt;&#x2F;span&gt;&lt;span&gt;KEY&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;secret_access_key &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&amp;gt; &lt;&#x2F;span&gt;&lt;span&gt;SECRET
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Bucket &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;AWS&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;S3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;S3Object
+&lt;&#x2F;span&gt;&lt;span&gt;  set_current_bucket_to &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;test&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;rand&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt;stderr&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;puts&lt;&#x2F;span&gt;&lt;span&gt; n
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Bucket&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;store&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample.txt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;,&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;to_s&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;puts &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fac863;&quot;&gt;Bucket&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;find&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;sample.txt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;#39;).&lt;&#x2F;span&gt;&lt;span&gt;url
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Invoke thusly,&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;sh&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-sh &quot;&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;curl &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;`&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;ruby s3.rb&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;`
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;5
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;5
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Isn&#x27;t that just awesome?&lt;&#x2F;p&gt;
+&lt;p&gt;See you next Friday.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Pypette</title>
+        <published>2011-02-06T00:00:00+00:00</published>
+        <updated>2011-02-06T00:00:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://agdr.org/blog/pypette/" type="text/html"/>
+        <id>https://agdr.org/blog/pypette/</id>
+        
+        <content type="html">&lt;h2 id=&quot;bioinformatics-algorithms-implemented-in-c-wrapped-in-python&quot;&gt;Bioinformatics algorithms implemented in C, wrapped in Python.&lt;&#x2F;h2&gt;
+&lt;p&gt;Bioinformatics applications are naturally targeted at solving a specific
+problem. If a researcher creates a new protocol, he or she must a.) adjust that
+protocol to the software b.) write software specific to that problem or c.) wait
+for someone to write software specific to that problem. The goal of Pypette is
+to make option b easier by implementing common bioinformatics algorithms that
+can be mixed and matched.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;example-problem&quot;&gt;Example problem:&lt;&#x2F;h2&gt;
+&lt;p&gt;A researcher wants to perform a &lt;em&gt;de novo&lt;&#x2F;em&gt; assembly from short reads using a
+de-Brujin graph approach similar to Velvet, taking into account quality scores.
+The short reads came from an environmental sample amplified with random hexamers
+and is thus a metagenomic sample. The researcher estimates that there are 4
+prominent organisms in the sample and each should have a genome coverage of
+about 18x. Before assembling, the researcher wishes to bin the reads according
+to which organism the read is most likely to belong to using the hidden-markov
+model approach (via: &lt;a href=&quot;http:&#x2F;&#x2F;ivory.idyll.org&#x2F;blog&#x2F;aug-10&#x2F;assembly-part-i.html&quot;&gt;Assembly is hard because it&#x27;s not
+decomposable&lt;&#x2F;a&gt;)&lt;&#x2F;p&gt;
+&lt;p&gt;This procedure would be complicated to implement from scratch. As a result the
+researcher may either give up, change the experiment, or attempt to carry out
+the procedure by adapting existing tools.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;solution&quot;&gt;Solution:&lt;&#x2F;h2&gt;
+&lt;p&gt;One way to make this easier would be to implement sensible interfaces (APIs) to
+commonly used bioinformatics programs allowing them to be combined in a
+programming language.&lt;&#x2F;p&gt;
+&lt;p&gt;The following example is contrived and not implemented. It simply represents an
+ideal scenario.&lt;&#x2F;p&gt;
+&lt;p&gt;In this example solution, the inputs and outputs of the read binner and
+assembler are easily combined using an imaginary Python library.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b2c2f;color:#cccece;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;pypette &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;debrujin&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;markov&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;fastq
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Load the reads
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;with &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;open&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;reads.fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;as &lt;&#x2F;span&gt;&lt;span&gt;handle&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    reads &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;fastq&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;load&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;handle&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Cluster reads
+&lt;&#x2F;span&gt;&lt;span&gt;reads_binned &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;markov&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;cluster&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;reads&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;probability&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;lambda &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;qual&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;to_f&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;bins&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;4&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Construction of debrujin graph per bin
+&lt;&#x2F;span&gt;&lt;span&gt;graphs &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= {}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bin &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;enumerate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;reads_binned&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    graphs&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;] = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;debrujin&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;bin&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;probability&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;lambda &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;qual&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;to_f&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;k&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f99157;&quot;&gt;31&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Solve graph, convert to contigs
+&lt;&#x2F;span&gt;&lt;span&gt;contigs &lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;= {&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span&gt;graphs&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;contigs&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;graphs&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;solve&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;()}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5f6364;&quot;&gt;# Output contig files in fasta format
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span&gt;contig_group &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;contigs&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;items&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;with &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;open&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;contigs-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;.fa&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#99c794;&quot;&gt;w&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;&amp;quot;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;as &lt;&#x2F;span&gt;&lt;span&gt;handle&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;contig &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c594c5;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span&gt;contig_group&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;handle&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;write&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;contig&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;fasta&lt;&#x2F;span&gt;&lt;span style=&quot;color:#5fb3b3;&quot;&gt;())
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;em&gt;or something like that...&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;voila&quot;&gt;Voila!&lt;&#x2F;h2&gt;
+&lt;p&gt;This is a super over-simplified example but it illustrates the idea.&lt;&#x2F;p&gt;
+&lt;p&gt;The user was able to craft a complex bioinformatics application with very little
+code without having to implement the underlying bioinformatics algorithms, just
+customize them.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

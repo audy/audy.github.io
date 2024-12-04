@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    /* Default styles for all screen sizes */
+
+    html, body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-family: "Consolas", monospace;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    :not(pre) > code {
+      border-radius: 4px;
+      padding: 1px;
+      background-color: #eee;
+      font-style: italic;
+      font-family: "Consolas", monospace;
+    }
+
+    .blog-description li {
+      margin-bottom: 30px;
+    }
+
+    .no-dots li {
+      list-style: none;
+    }
+
+    :root {
+        --link-color: black;
+    }
+
+    a {
+        color: var(--link-color);
+        font-weight: bold;
+    }
+
+    hr {
+      color: #fff;
+      background-color: var(--link-color);
+    }
+
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      font-family: "Consolas", monospace;
+      white-space: pre-wrap; /* Allow text to wrap on small screens */
+    }
+
+    .dimmed {
+      color: #777;
+    }
+
+    /* Media query for smaller screens (e.g., mobile phones) */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px; /* Adjust padding as needed for smaller screens */
+      }
+
+      pre {
+        padding: 8px; /* Adjust padding as needed for smaller screens */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="header">
+    <h1>
+      <canvas id="the-canvas" width=50 height=50>
+      </canvas>
+      <span id="title">agdr.org</span>
+    </h1>
+  </div>
+  <hr/>
+
+  <div>
+    
+
+<a href="/">&lt; Back</a>
+
+<h1 class="title">
+  Good Practices for Bioinformatics CLIs
+</h1>
+
+<p class="subtitle dimmed">2021-04-13</p>
+
+
+<h1 id="scenario">Scenario</h1>
+<p>You're the author of an important bioinformatics program that can accurately
+predict some biologically-meaningful properties. The scientific community would
+like to use your program as part of a larger pipeline. However, some common
+follies / design decisions in bioinformatics software can make that job
+difficult:</p>
+<ol>
+<li>Running External Programs</li>
+<li>Too Much Magic #1: Automatic Filename(s)</li>
+<li>Too Much Magic #2: Automatic Updates</li>
+</ol>
+<h1 id="running-external-programs">Running External Programs</h1>
+<p>This section is dedicated to the countless hours I have spent debugging tools
+which execute an external process but do not produce an error if that external
+process fails for some reason.</p>
+<h2 id="avoid-os-system">Avoid <code>os.system</code></h2>
+<p><code>os.system</code> is the shortest to type method for running an external program but
+commonly causes bugs due to the fact that if the command fails, the Python
+program will continue to execute as if nothing happened, sometimes without
+noticing.</p>
+<p>This example shows what happens if you run a command that fails with
+<code>os.system</code></p>
+<pre data-lang="python" style="background-color:#2b2c2f;color:#cccece;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#c594c5;">import </span><span>os
+</span><span>
+</span><span style="color:#6699cc;">print</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">generating myfile.txt using nonsense.exe</span><span style="color:#5fb3b3;">&quot;)
+</span><span>
+</span><span>exit_code </span><span style="color:#5fb3b3;">= </span><span style="color:#6699cc;">os</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">system</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">nonsense.exe --output myfile.txt</span><span style="color:#5fb3b3;">&quot;)
+</span><span>
+</span><span style="color:#6699cc;">print</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">finished generating myfile.txt</span><span style="color:#5fb3b3;">&quot;)
+</span><span>
+</span><span style="color:#c594c5;">assert </span><span>exit_code </span><span style="color:#5fb3b3;">== </span><span style="color:#f99157;">0</span><span>, </span><span style="color:#5fb3b3;">&quot;</span><span style="color:#99c794;">You *can* make sure that the program succeeded, but people often forget</span><span style="color:#5fb3b3;">&quot;
+</span></code></pre>
+<p>Any downstream code that assumes <code>myfile.txt</code> exists will now break. Also,
+because <code>os.system</code> did not raise an exception, it becomes more difficult to
+find out the reason why <code>myfile.txt</code> does not exist.</p>
+<p><code>subprocess.call</code> is a little better because it will fail if <code>nonsense.exe</code>
+does not exist. However, if you try to run a real command but it fails, the
+script continues as if nothing bad happened:</p>
+<pre data-lang="python" style="background-color:#2b2c2f;color:#cccece;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#c594c5;">import </span><span>subprocess
+</span><span style="color:#5f6364;"># the script would crash here
+</span><span style="color:#6699cc;">subprocess</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">call</span><span style="color:#5fb3b3;">([&quot;</span><span style="color:#99c794;">nonsense</span><span style="color:#5fb3b3;">&quot;, &quot;</span><span style="color:#99c794;">output.txt</span><span style="color:#5fb3b3;">&quot;])
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b2c2f;color:#cccece;" class="language-python "><code class="language-python" data-lang="python"><span>exit_code </span><span style="color:#5fb3b3;">= </span><span style="color:#6699cc;">subprocess</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">call</span><span style="color:#5fb3b3;">([&quot;</span><span style="color:#99c794;">ls</span><span style="color:#5fb3b3;">&quot;, &quot;</span><span style="color:#99c794;">--not-a-real-argument</span><span style="color:#5fb3b3;">&quot;])
+</span><span>
+</span><span style="color:#6699cc;">print</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">finished running ls</span><span style="color:#5fb3b3;">&quot;)
+</span><span>
+</span><span style="color:#c594c5;">assert </span><span>exit_code </span><span style="color:#5fb3b3;">== </span><span style="color:#f99157;">0</span><span>, </span><span style="color:#5fb3b3;">&quot;</span><span style="color:#99c794;">You *can* make sure that the program succeeded, but people often forget</span><span style="color:#5fb3b3;">&quot;
+</span></code></pre>
+<p>If you really wanted to make this safe, you'd have to do the following:</p>
+<pre data-lang="python" style="background-color:#2b2c2f;color:#cccece;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#c594c5;">try</span><span style="color:#5fb3b3;">:
+</span><span>    exit_code </span><span style="color:#5fb3b3;">= </span><span style="color:#6699cc;">subprocess</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">call</span><span style="color:#5fb3b3;">([&quot;</span><span style="color:#99c794;">ls</span><span style="color:#5fb3b3;">&quot;, &quot;</span><span style="color:#99c794;">--not-a-real-argument</span><span style="color:#5fb3b3;">&quot;])
+</span><span style="color:#c594c5;">except </span><span style="color:#fac863;">FileNotFoundError</span><span style="color:#5fb3b3;">:
+</span><span>    </span><span style="color:#6699cc;">print</span><span style="color:#5fb3b3;">(&quot;</span><span style="color:#99c794;">program does not exist</span><span style="color:#5fb3b3;">&quot;)
+</span><span style="color:#c594c5;">finally</span><span style="color:#5fb3b3;">:
+</span><span>    </span><span style="color:#c594c5;">assert </span><span>exit_code </span><span style="color:#5fb3b3;">== </span><span style="color:#f99157;">0</span><span>, </span><span style="color:#5fb3b3;">&quot;</span><span style="color:#99c794;">Program did not exit successfully</span><span style="color:#5fb3b3;">&quot;
+</span></code></pre>
+<p>But that involves a lot more typing than simply using <code>subprocess.check_output</code>:</p>
+<pre data-lang="python" style="background-color:#2b2c2f;color:#cccece;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#5f6364;"># works
+</span><span style="color:#6699cc;">subprocess</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">call</span><span style="color:#5fb3b3;">([&quot;</span><span style="color:#99c794;">ls</span><span style="color:#5fb3b3;">&quot;])
+</span><span>
+</span><span style="color:#5f6364;"># FileNotFoundError
+</span><span style="color:#6699cc;">subprocess</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">check_output</span><span style="color:#5fb3b3;">([&quot;</span><span style="color:#99c794;">notacommand</span><span style="color:#5fb3b3;">&quot;])
+</span><span>
+</span><span style="color:#5f6364;"># subprocess.CalledProcessError
+</span><span style="color:#6699cc;">subprocess</span><span style="color:#5fb3b3;">.</span><span style="color:#6699cc;">call</span><span style="color:#5fb3b3;">([&quot;</span><span style="color:#99c794;">ls</span><span style="color:#5fb3b3;">&quot;, &quot;</span><span style="color:#99c794;">--not-a-real-argument</span><span style="color:#5fb3b3;">&quot;])
+</span></code></pre>
+<p><em>tl;dr</em> It's safest and easiest to just use <code>subprocess.check_output</code> for
+running external commands. For more advanced features such as reading from
+standard out or standard error, see <code>subprocess.Popen</code>.</p>
+<h1 id="avoid-automatically-generated-output-filenames">Avoid: Automatically Generated Output Filenames</h1>
+<p>Many tools I've encountered will automatically generate the paths to output
+file(s). This is done to help the user. Who wants to manually specify the
+output filename especially if there are more than one? This usually causes
+issues down the line when a user tries to run a program using another program
+as it adds work to guess the path to the output file(s).</p>
+<p>For example, many tools use the input filename as the prefix to all of the
+outputs.</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#6699cc;">mytool</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input</span><span style="color:#6699cc;"> sample123.fastq
+</span><span style="color:#6699cc;">ls
+</span><span style="color:#5f6364;"># sample123.fastq sample123.results.csv
+</span></code></pre>
+<p>Let's say the user now wants to count how many lines there are in the output.
+They now have to write additional code to generate the output file path</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span>input_filename</span><span style="color:#5fb3b3;">=</span><span style="color:#99c794;">sample123.fastq
+</span><span>
+</span><span style="color:#6699cc;">mytool</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input</span><span style="color:#6699cc;"> sample123.fastq
+</span><span>
+</span><span>results_path</span><span style="color:#5fb3b3;">=$(</span><span style="color:#6699cc;">basename </span><span style="color:#5fb3b3;">${</span><span>input_filename</span><span style="color:#5fb3b3;">}</span><span style="color:#6699cc;"> .fastq</span><span style="color:#5fb3b3;">)</span><span style="color:#99c794;">.results.csv
+</span></code></pre>
+<p>Consider a user wrapping this tool in a script:</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span>input_filename</span><span style="color:#5fb3b3;">=&quot;</span><span style="color:#99c794;">sample123.fastq</span><span style="color:#5fb3b3;">&quot;
+</span><span style="color:#6699cc;">mytool</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input </span><span style="color:#5fb3b3;">&quot;${</span><span>input_filename</span><span style="color:#5fb3b3;">}&quot;
+</span><span style="color:#6699cc;">ls
+</span><span>
+</span><span style="color:#5f6364;"># sample123.fastq.results-20210513.csv
+</span></code></pre>
+<p>Let's say the user now wants to count how many lines there are in the output.
+The code needed to figure out the output path starts to become more complicated
+and brittle due to <code>mytool</code> and the wrapping script having to implement
+formatting the date in the exact same way:</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span>input_filename</span><span style="color:#5fb3b3;">=&quot;</span><span style="color:#99c794;">sample123.fastq</span><span style="color:#5fb3b3;">&quot;
+</span><span>
+</span><span style="color:#6699cc;">mytool</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input </span><span style="color:#5fb3b3;">&quot;${</span><span>input_filename</span><span style="color:#5fb3b3;">}&quot;
+</span><span>
+</span><span>output_path</span><span style="color:#5fb3b3;">=&quot;</span><span style="color:#99c794;">sample123.fastq.results-</span><span style="color:#5fb3b3;">$(</span><span style="color:#6699cc;">date +</span><span style="color:#5fb3b3;">%</span><span>Y</span><span style="color:#5fb3b3;">%</span><span>m</span><span style="color:#5fb3b3;">%</span><span>d</span><span style="color:#5fb3b3;">)</span><span style="color:#99c794;">.csv</span><span style="color:#5fb3b3;">&quot;
+</span><span style="color:#6699cc;">wc</span><span style="color:#5fb3b3;"> -</span><span style="color:#f99157;">l </span><span style="color:#5fb3b3;">&quot;${</span><span>output_path</span><span style="color:#5fb3b3;">}&quot;
+</span></code></pre>
+<p>If you allow the user to provide the output path(s) as arguments, the script
+becomes much simpler:</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span>input_filename</span><span style="color:#5fb3b3;">=</span><span style="color:#99c794;">sample123.fastq
+</span><span>
+</span><span style="color:#6699cc;">mytool</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input</span><span style="color:#6699cc;"> sample123.fastq</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">output</span><span style="color:#6699cc;"> results.csv
+</span><span>
+</span><span style="color:#6699cc;">wc</span><span style="color:#5fb3b3;"> -</span><span style="color:#f99157;">l</span><span style="color:#6699cc;"> results.csv
+</span></code></pre>
+<p><em>tl;dr</em> while it might appear that automatically generating output filenames
+makes a user's life easier; it ends up adding work down the road.</p>
+<h1 id="avoid-automatically-self-updating-code-data">Avoid: Automatically Self-Updating Code / Data</h1>
+<p>Tools that use an external database sometimes check to see if the local copy of
+that database is up-to-date and will automatically check for and download a
+newer version from the internet if available.</p>
+<p>While it is often important to have an up-to-date copy of a database this
+breaks reproducibility and can lead to failures if the server hosting the
+database goes offline. When creating robust bioinformatics tools, being able to
+produce a result reproducibly is more important than unintentially changing the
+output because an external database has been updated.</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#5f6364;"># bad
+</span><span style="color:#6699cc;">$ mytool</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input</span><span style="color:#6699cc;"> sample123.fastq
+</span><span style="color:#5f6364;"># mytool: checking for updates
+</span><span style="color:#5f6364;"># mytool: found newer database... downloading
+</span><span>
+</span><span style="color:#6699cc;">sample123.fastq.results.csv </span><span style="color:#5f6364;"># &lt;- no longer reproducible result
+</span></code></pre>
+<p>As an alternative, I recommend not automatically updating and instead provide a
+command to update the database. Then I have control over when the database is
+updated and can keep copies of multiple versions if necessary:</p>
+<pre data-lang="sh" style="background-color:#2b2c2f;color:#cccece;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#6699cc;">mytool update-database</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">output</span><span style="color:#6699cc;"> database.fasta
+</span><span>
+</span><span style="color:#6699cc;">mytool run-analysis</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">input</span><span style="color:#6699cc;"> sample123.fastq</span><span style="color:#5fb3b3;"> --</span><span style="color:#f99157;">database</span><span style="color:#6699cc;"> database.fasta
+</span></code></pre>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr/>
+      (c) 2011-2023 Austin G. Davis-Richardson
+      <br/>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+  <script type="text/javascript">
+   const canvas = document.getElementById('the-canvas');
+   const ctx = canvas.getContext('2d');
+
+   const rows = 10;
+   const columns = 10;
+   const squareSize = 480 / 100;
+
+   function getRandomColor() {
+       const letters = '0123456789ABCDEF';
+       let color = '#';
+       for (let i = 0; i < 6; i++) {
+           color += letters[Math.floor(Math.random() * 16)];
+       }
+       return color;
+   }
+
+   function drawGrid(color) {
+     for (let i = 0; i < rows; i++) {
+         for (let j = 0; j < columns; j++) {
+             ctx.beginPath();
+             ctx.fillStyle = color || getRandomColor();
+             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+             ctx.stroke();
+         }
+     }
+   }
+
+   canvas.addEventListener('click', (event) => {
+       const x = event.offsetX;
+       const y = event.offsetY;
+
+       const columnIndex = Math.floor(x / squareSize);
+       const rowIndex = Math.floor(y / squareSize);
+
+       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
+       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
+
+       drawGrid();
+
+       document.documentElement.style.setProperty('--link-color', colorClickedHex);
+   });
+   drawGrid();
+ </script>
+
+</body>
+</html>

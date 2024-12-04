@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    /* Default styles for all screen sizes */
+
+    html, body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-family: "Consolas", monospace;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    :not(pre) > code {
+      border-radius: 4px;
+      padding: 1px;
+      background-color: #eee;
+      font-style: italic;
+      font-family: "Consolas", monospace;
+    }
+
+    .blog-description li {
+      margin-bottom: 30px;
+    }
+
+    .no-dots li {
+      list-style: none;
+    }
+
+    :root {
+        --link-color: black;
+    }
+
+    a {
+        color: var(--link-color);
+        font-weight: bold;
+    }
+
+    hr {
+      color: #fff;
+      background-color: var(--link-color);
+    }
+
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      font-family: "Consolas", monospace;
+      white-space: pre-wrap; /* Allow text to wrap on small screens */
+    }
+
+    .dimmed {
+      color: #777;
+    }
+
+    /* Media query for smaller screens (e.g., mobile phones) */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px; /* Adjust padding as needed for smaller screens */
+      }
+
+      pre {
+        padding: 8px; /* Adjust padding as needed for smaller screens */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="header">
+    <h1>
+      <canvas id="the-canvas" width=50 height=50>
+      </canvas>
+      <span id="title">agdr.org</span>
+    </h1>
+  </div>
+  <hr/>
+
+  <div>
+    
+
+<a href="/">&lt; Back</a>
+
+<h1 class="title">
+  RMarkdown &amp; Continuous Integration
+</h1>
+
+<p class="subtitle dimmed">2015-01-13</p>
+
+
+<p>In my <a href="http://agdr.org/2015/01/13/RMarkdown-+-Continuous-Integration.html">previous
+post</a>, I
+wrote about writing a <code>Makefile</code> to render <code>.Rmd</code> files to <code>pdf</code> (or <code>html</code>)
+automatically.</p>
+<p>I've been playing around with using continuous integration for scientific
+analysis using <a href="https://travis-ci.com">Travis-CI</a>, RMarkdown and GitHub. This
+way, whenever I perform a <code>git push</code> to GitHub, Travis-CI will pull down the
+latest code and run it. Since in this case, the &quot;code&quot; consists of RMarkdown
+files containing my analyses, Travis-CI will re-run my analyses every time I
+update the code. This can be useful for checking that my code works but, more
+importantly, preserving a record of <em>how</em> to run the analysis code, and
+notifying me when something breaks.</p>
+<p>I added continuous integration using <a href="https://travis-ci.com">Travis-CI</a> to my
+<a href="https://github.com/audy/make-rmarkdown">Make + RMarkdown example</a>. When GitHub
+receives a <code>git push</code>, Travis will clone the repository and run <code>make</code> which
+will build all RMarkdown files and notify you of any failures.</p>
+<p>This could also be used to build RMarkdown files automatically if the output
+could somehow be sent elsewhere. One way to do this would be to send them to a
+remote machine using secure-copy or FTP.</p>
+<p>This configuration does not handle dependency management. I added a script to
+install dependencies but this is less than ideal. R has really only one good
+solution for package management called
+<a href="https://rstudio.github.io/packrat/">Packrat</a>. Packrat requires all dependencies
+to be tracked in Git. I'm not a fan of &quot;vendoring&quot; all dependencies and this
+could lead to licensing issues if you publish your code under MIT (many R
+libraries are GPL) but Packrat has at least been reliable in my experience.</p>
+<p>See <a href="https://github.com/audy/make-rmarkdown/blob/master/.travis.yml"><code>.travis.yml</code></a></p>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr/>
+      (c) 2011-2023 Austin G. Davis-Richardson
+      <br/>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+  <script type="text/javascript">
+   const canvas = document.getElementById('the-canvas');
+   const ctx = canvas.getContext('2d');
+
+   const rows = 10;
+   const columns = 10;
+   const squareSize = 480 / 100;
+
+   function getRandomColor() {
+       const letters = '0123456789ABCDEF';
+       let color = '#';
+       for (let i = 0; i < 6; i++) {
+           color += letters[Math.floor(Math.random() * 16)];
+       }
+       return color;
+   }
+
+   function drawGrid(color) {
+     for (let i = 0; i < rows; i++) {
+         for (let j = 0; j < columns; j++) {
+             ctx.beginPath();
+             ctx.fillStyle = color || getRandomColor();
+             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
+             ctx.stroke();
+         }
+     }
+   }
+
+   canvas.addEventListener('click', (event) => {
+       const x = event.offsetX;
+       const y = event.offsetY;
+
+       const columnIndex = Math.floor(x / squareSize);
+       const rowIndex = Math.floor(y / squareSize);
+
+       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
+       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
+
+       drawGrid();
+
+       document.documentElement.style.setProperty('--link-color', colorClickedHex);
+   });
+   drawGrid();
+ </script>
+
+</body>
+</html>
