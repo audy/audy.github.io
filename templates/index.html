@@ -19,7 +19,7 @@
   <h3>Contact</h3>
   <ul class="no-dots">
     <li>Email - <a id="email-link" href=""></a></li>
-    <li>Mastodon - <a rel="me" href="https://mastodon.social/@audy">@audy</a></li>
+    <li>Bluesky - <a rel="me" href="https://bsky.app/profile/agdr.org">@agdr.org</a></li>
   </ul>
 </div>
 
@@ -30,22 +30,5 @@
     <li><a href="https://github.com/audy/">GitHub</a></li>
   </ul>
 </div>
-
-<div id="table-of-contents">
-  {% for p in section.subsections %}
-    {% set subsection = get_section(path=p) %}
-    <h3>{{ subsection.title }}</h3>
-    <ul class="no-dots blog-description">
-      {% for page in subsection.pages %}
-      <li>
-        <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
-        <span class="dimmed">{{ page.date }}</span>
-        <p>{{ page.description | markdown(inline=true) | safe}}</p>
-      </li>
-      {% endfor %}
-    </ul>
-  {% endfor %}
-</div>
-
 
 {% endblock content %}
