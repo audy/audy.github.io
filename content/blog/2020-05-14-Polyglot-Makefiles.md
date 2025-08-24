@@ -23,7 +23,7 @@ Now typing `make bash` will print `¡hola, bash!`
 What else is possible? Can I use other programming languages as the shell?  Is
 it possible to write in-line Python in a `Makefile`?
 
-## Python
+### Python
 
 ```makefile
 .ONESHELL:
@@ -45,7 +45,7 @@ Davis-\* and blogs about `make`](https://tech.davis-hansson.com/p/make/),
 causes multi-line code in the Make directive to be evaluated in a single call
 to Python.
 
-## R
+### R
 
 What about writing R in-line in a Makefile? Note the addition of `.SHELLFLAGS`.
 By default, `make` runs `SHELL -c "your\nscript\nhere"` which is not compatible
@@ -63,7 +63,7 @@ This is equivalent to running `Rscript -e 'greeting = "bounjour"; message(paste0
 
 Now you can write a pipeline that combines R and Python in a single file 🎉
 
-## Bring in the containers
+### Bring in the containers
 
 Data analysis pipelines often have
 [adventurous](https://github.com/thackl/gggenomes#motivation--concept)
@@ -87,8 +87,7 @@ build artifacts can be shared between make directives.
 ```
 hello, Linux 453c728113d6 4.19.76-linuxkit #1 SMP Fri Apr 3 15:53:26 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux!
 ```
-
-## Why?
+### Why?
 
 This started as an experiment to see what is possible with `make`. But it was
 motivated by a real world problem: I often need to combine tools across
@@ -102,7 +101,7 @@ spend less time figuring out how to get a bunch of dependencies installed in a
 single container which becomes increasingly difficult as the number of
 dependencies increases (especially if you work in Bioinformatics).
 
-## Full Makefile
+### Complete Example
 
 **note**: Some of these features only work on `make 4.+` which I installed
 using [Homebrew](https://brew.sh). These examples do not work using `make 3.x`

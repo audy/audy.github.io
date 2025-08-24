@@ -2,8 +2,8 @@
 base_url = "https://agdr.org"
 compile_sass = false
 
-generate_feed = true
+generate_feeds = true
 
 [markdown]
 highlight_code = true
-highlight_theme = "charcoal"
+highlight_theme = "nord"

@@ -2,6 +2,7 @@
 title = "Other Sites"
 date = 2016-06-29
 description = "Some other websites I have made"
+extra.hide = true
 +++
 
 Other websites I've made and sometimes maintain in my free time:

@@ -9,7 +9,6 @@ Site built using [Zola](https://github.com/getzola/zola).
 
 ## Development
 
-
 ```sh
 zola serve
 ```

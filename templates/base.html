@@ -6,84 +6,134 @@
   <title>~ Austin G. Davis-Richardson</title>
 
   <style type="text/css">
-    /* Default styles for all screen sizes */
 
-    html, body {
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      font-family: "Consolas", monospace;
-    }
 
-    body {
-      padding: 20px;
-      width: 800px;
-      display: block;
-    }
+:root {
+  --nord0: #2E3440; /* darkest bg */
+  --nord1: #3B4252;
+  --nord2: #434C5E;
+  --nord3: #4C566A; /* dim fg */
+  --nord4: #D8DEE9; /* fg */
+  --nord5: #E5E9F0;
+  --nord6: #ECEFF4; /* lightest */
+  --nord7: #8FBCBB; /* cyan */
+  --nord8: #88C0D0; /* light blue */
+  --nord9: #81A1C1; /* blue */
+  --nord10: #5E81AC; /* deep blue */
+  --nord11: #BF616A; /* red */
+  --nord12: #D08770; /* orange */
+  --nord13: #EBCB8B; /* yellow */
+  --nord14: #A3BE8C; /* green */
+  --nord15: #B48EAD; /* purple */
 
-    :not(pre) > code {
-      border-radius: 4px;
-      padding: 1px;
-      background-color: #eee;
-      font-style: italic;
-      font-family: "Consolas", monospace;
-    }
+  --link-color: var(--nord8);
+  --text-color: var(--nord4);
+  --bg-color: var(--nord1);
+  --dimmed: var(--nord4);
+}
 
-    .blog-description li {
-      margin-bottom: 30px;
-    }
+/* Base layout */
+html, body {
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: "Consolas", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .no-dots li {
-      list-style: none;
-    }
+body {
+  padding: 20px;
+  width: 800px;
+  display: block;
+}
 
-    :root {
-        --link-color: black;
-    }
+/* Inline code */
+:not(pre) > code {
+  border-radius: 4px;
+  padding: 2px 4px;
+  background-color: var(--nord2);
+  color: var(--nord13);
+  font-style: normal;
+}
 
-    a {
-        color: var(--link-color);
-        font-weight: bold;
-    }
+/* Links */
+a {
+  color: var(--link-color);
+  font-weight: bold;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
 
-    hr {
-      color: #fff;
-      background-color: var(--link-color);
-    }
+/* Horizontal rule */
+hr {
+  border: 0;
+  height: 1px;
+  background-color: var(--nord3);
+  margin: 1.5em 0;
+}
 
-    pre {
-      padding: 12px;
-      border-radius: 6px;
-      font-family: "Consolas", monospace;
-      white-space: pre-wrap; /* Allow text to wrap on small screens */
-    }
+/* Code blocks */
+pre {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--nord1);
+  color: var(--nord6);
+  font-family: "Consolas", monospace;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
 
-    .dimmed {
-      color: #777;
-    }
+/* Markdown-style heading prefixes */
+h1::before { color: var(--nord15); content: "# "; }
+h2::before { color: var(--nord15); content: "## "; }
+h3::before { color: var(--nord15); content: "### "; }
+h4::before { color: var(--nord15); content: "#### "; }
+h5::before { color: var(--nord15); content: "##### "; }
+h6::before { color: var(--nord15); content: "###### "; }
 
-    /* Media query for smaller screens (e.g., mobile phones) */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px; /* Adjust padding as needed for smaller screens */
-      }
+/* Lists */
+.no-dots li {
+  list-style: none;
+}
+ul li::before {
+  content: "* ";
+  color: var(--nord15);
+  margin-left: -1.2em;
+}
+ol {
+  counter-reset: item;
+}
+ol li {
+  counter-increment: item;
+}
+ol li::before {
+  content: counter(item) ". ";
+  color: var(--nord15);
+  margin-left: -1.2em;
+}
 
-      pre {
-        padding: 8px; /* Adjust padding as needed for smaller screens */
-      }
-    }
+/* Dimmed text */
+.dimmed {
+  color: var(--dimmed);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body { padding: 10px; }
+  pre { padding: 8px; }
+}
+
+
   </style>
 </head>
 
 <body>
-
-
   <div id="header">
     <h1>
-      <canvas id="the-canvas" width=50 height=50>
-      </canvas>
       <span id="title">agdr.org</span>
     </h1>
   </div>
@@ -97,9 +147,10 @@
   <div>
     <span class="dimmed">
       <hr/>
-      (c) 2011-2023 Austin G. Davis-Richardson
+      (c) 2011-2025 Austin G. Davis-Richardson
       <br/>
       Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      <br/>
     </span>
   </div>
 
@@ -116,51 +167,6 @@
     generateEmail();
 
   </script>
-
-  <script type="text/javascript">
-   const canvas = document.getElementById('the-canvas');
-   const ctx = canvas.getContext('2d');
-
-   const rows = 10;
-   const columns = 10;
-   const squareSize = 480 / 100;
-
-   function getRandomColor() {
-       const letters = '0123456789ABCDEF';
-       let color = '#';
-       for (let i = 0; i < 6; i++) {
-           color += letters[Math.floor(Math.random() * 16)];
-       }
-       return color;
-   }
-
-   function drawGrid(color) {
-     for (let i = 0; i < rows; i++) {
-         for (let j = 0; j < columns; j++) {
-             ctx.beginPath();
-             ctx.fillStyle = color || getRandomColor();
-             ctx.fillRect(j * squareSize, i * squareSize, squareSize, squareSize);
-             ctx.stroke();
-         }
-     }
-   }
-
-   canvas.addEventListener('click', (event) => {
-       const x = event.offsetX;
-       const y = event.offsetY;
-
-       const columnIndex = Math.floor(x / squareSize);
-       const rowIndex = Math.floor(y / squareSize);
-
-       const colorClicked = ctx.getImageData(x, y, 1, 1).data;
-       const colorClickedHex = `#${((1 << 24) + (colorClicked[0] << 16) + (colorClicked[1] << 8) + colorClicked[2]).toString(16).slice(1)}`;
-
-       drawGrid();
-
-       document.documentElement.style.setProperty('--link-color', colorClickedHex);
-   });
-   drawGrid();
- </script>
 
 </body>
 </html>

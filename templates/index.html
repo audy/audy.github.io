@@ -2,33 +2,37 @@
 
 {% block content %}
 
-
-<div>
-  <h3>
-    Austin Davis-Richardson
-  </h3>
-  <ul class="no-dots">
-    <li>
-      Metagenomics scientist and software engineer
-    </li>
-  </ul>
-</div>
-
-
 <div id="contact">
-  <h3>Contact</h3>
+  <h2>Contact</h2>
   <ul class="no-dots">
-    <li>Email - <a id="email-link" href=""></a></li>
-    <li>Bluesky - <a rel="me" href="https://bsky.app/profile/agdr.org">@agdr.org</a></li>
+    <li><a id="email-link" href=""></a></li>
   </ul>
 </div>
 
 <div id="links">
-  <h3>Links</h3>
+  <h2>Links</h2>
   <ul class="no-dots">
     <li><a href="https://scholar.google.com/citations?hl=en&user=xw0mHYEAAAAJ&view_op=list_works&sortby=pubdate">Publications</a></li>
     <li><a href="https://github.com/audy/">GitHub</a></li>
+    <li><a rel="me" href="https://bsky.app/profile/agdr.org">Bluesky</a></li>
   </ul>
+</div>
+
+<div id="table-of-contents">
+  {% for p in section.subsections %}
+    {% set subsection = get_section(path=p) %}
+    <h2>{{ subsection.title }}</h2>
+    <ul class="no-dots blog-description">
+      {% for page in subsection.pages %}
+        {% if not page.extra.hide %}
+          <li>
+            <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
+            <span class="dimmed">{{ page.date }}</span>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% endfor %}
 </div>
 
 {% endblock content %}
