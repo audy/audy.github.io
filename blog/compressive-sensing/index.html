@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    :root {
+      --nord0: #2E3440;
+      /* darkest bg */
+      --nord1: #3B4252;
+      --nord2: #434C5E;
+      --nord3: #4C566A;
+      /* dim fg */
+      --nord4: #D8DEE9;
+      /* fg */
+      --nord5: #E5E9F0;
+      --nord6: #ECEFF4;
+      /* lightest */
+      --nord7: #8FBCBB;
+      /* cyan */
+      --nord8: #88C0D0;
+      /* light blue */
+      --nord9: #81A1C1;
+      /* blue */
+      --nord10: #5E81AC;
+      /* deep blue */
+      --nord11: #BF616A;
+      /* red */
+      --nord12: #D08770;
+      /* orange */
+      --nord13: #EBCB8B;
+      /* yellow */
+      --nord14: #A3BE8C;
+      /* green */
+      --nord15: #B48EAD;
+      /* purple */
+
+      --link-color: var(--nord8);
+      --text-color: var(--nord4);
+      --bg-color: var(--nord1);
+      --dimmed: var(--nord4);
+    }
+
+    /* Base layout */
+    html,
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Consolas", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    /* Inline code */
+    :not(pre)>code {
+      border-radius: 4px;
+      padding: 2px 4px;
+      background-color: var(--nord2);
+      color: var(--nord13);
+      font-style: normal;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Horizontal rule */
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: var(--nord3);
+      margin: 1.5em 0;
+    }
+
+    /* Code blocks */
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--nord1);
+      color: var(--nord6);
+      font-family: "Consolas", monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--nord6);
+    }
+
+    ;
+
+    /* Markdown-style heading prefixes */
+    h1::before {
+      color: var(--nord15);
+      content: "# ";
+    }
+
+    h2::before {
+      color: var(--nord15);
+      content: "## ";
+    }
+
+    h3::before {
+      color: var(--nord15);
+      content: "### ";
+    }
+
+    h4::before {
+      color: var(--nord15);
+      content: "#### ";
+    }
+
+    h5::before {
+      color: var(--nord15);
+      content: "##### ";
+    }
+
+    h6::before {
+      color: var(--nord15);
+      content: "###### ";
+    }
+
+    /* Lists */
+    li {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "* ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ". ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    blockquote {
+      color: var(--nord8);
+    }
+
+    /* Dimmed text */
+    .dimmed {
+      color: var(--dimmed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        font-size: 18px;
+      }
+
+      body {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      pre {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 1.2em;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>
+      <a href="/">agdr.org</a>
+    </h1>
+  </div>
+  <hr />
+
+  <div>
+    
+
+<h2 class="title">
+  Compressive Sensing
+</h2>
+
+<p class="subtitle dimmed">2011-05-23</p>
+
+<h2 id="comparing-dna-sequences-using-gzip">Comparing DNA sequences using <code>gzip</code></h2>
+<p>I read something somewhere that described a simple data mining technique that
+used compression to determine if two strings are similar to each other. I can't
+find that article now but I always wanted to try it. The method works by
+comparing the size of the compressed versions of the strings to the size of the
+strings if they are compressed together. If the strings are similar, the
+compressed size will be smaller than the sum of the compressed sizes for the
+individual strings. If not, it will be greater.</p>
+<p>For example, if you want to compare two strings to see if they are similar,
+first compress them separately and get the length of the compressed strings:</p>
+<pre data-lang="ruby" style="background-color:#2e3440;color:#d8dee9;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#81a1c1;">&gt;&gt;</span><span> compress(</span><span style="color:#a3be8c;">&quot;Austin&quot;</span><span>)
+</span><span style="color:#eceff4;">=&gt; </span><span style="color:#b48ead;">9
+</span><span style="color:#81a1c1;">&gt;&gt;</span><span> compress(</span><span style="color:#a3be8c;">&quot;Boston&quot;</span><span>)
+</span><span style="color:#eceff4;">=&gt; </span><span style="color:#b48ead;">8
+</span></code></pre>
+<p>Now compress them together:</p>
+<pre data-lang="ruby" style="background-color:#2e3440;color:#d8dee9;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#81a1c1;">&gt;&gt;</span><span> compress(</span><span style="color:#a3be8c;">&quot;AustinBoston&quot;</span><span>)
+</span><span style="color:#eceff4;">=&gt; </span><span style="color:#b48ead;">12
+</span></code></pre>
+<p>12 is still more than 9 but less than 17 (the sum of separately compressed
+sizes). So the strings must be similar.</p>
+<p>I wanted to see if this would work with querying DNA databases for similar
+genes, so I wrote a <a href="https://agdr.org/blog/compressive-sensing/#source">little script</a>.</p>
+<p>I did some quick testing on a 16S database and by golly it seems to work. Even
+with partial sequences. I would like to do some benchmarking to see how
+accurate it is.</p>
+<p>This isn't really useful for searching a database as it still requires a
+one-to-one comparison of every sequence. However, gzip may be faster than
+Needleman-Wunsch (I couldn't find the Big O for gzip). So, it could be used to
+get a similarity score in cases where you don't need to see an actual
+alignment.</p>
+<h2 id="source">Source</h2>
+<pre data-lang="ruby" style="background-color:#2e3440;color:#d8dee9;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#81a1c1;">LEVEL = </span><span style="color:#b48ead;">9
+</span><span>
+</span><span>database </span><span style="color:#81a1c1;">= </span><span style="color:#8fbcbb;">ARGV</span><span>[</span><span style="color:#b48ead;">0</span><span>]
+</span><span>query </span><span style="color:#81a1c1;">= </span><span style="color:#8fbcbb;">ARGV</span><span>[</span><span style="color:#b48ead;">1</span><span>]
+</span><span>
+</span><span style="color:#81a1c1;">require </span><span style="color:#a3be8c;">&#39;zlib&#39;
+</span><span>
+</span><span style="color:#616e88;"># Compression function.
+</span><span style="color:#81a1c1;">def </span><span style="color:#88c0d0;">deflate</span><span>(string)
+</span><span>   z </span><span style="color:#81a1c1;">= </span><span style="color:#8fbcbb;">Zlib</span><span style="color:#81a1c1;">::</span><span style="color:#8fbcbb;">Deflate</span><span style="color:#81a1c1;">.new</span><span>(</span><span style="color:#81a1c1;">LEVEL</span><span>)
+</span><span>   dst </span><span style="color:#81a1c1;">=</span><span> z</span><span style="color:#81a1c1;">.</span><span>deflate(string</span><span style="color:#eceff4;">, </span><span style="color:#8fbcbb;">Zlib</span><span style="color:#81a1c1;">::</span><span>FINISH)
+</span><span>   z</span><span style="color:#81a1c1;">.</span><span>close
+</span><span>   dst
+</span><span style="color:#81a1c1;">end
+</span><span>
+</span><span style="color:#616e88;"># Load entire database into memory.
+</span><span>db </span><span style="color:#81a1c1;">= </span><span style="font-style:italic;color:#88c0d0;">Hash</span><span style="color:#81a1c1;">.new
+</span><span style="color:#8fbcbb;">File</span><span style="color:#81a1c1;">.new</span><span>(database)</span><span style="color:#81a1c1;">.</span><span>read</span><span style="color:#81a1c1;">.</span><span>split(</span><span style="color:#a3be8c;">/</span><span style="color:#ebcb8b;">^&gt;</span><span style="color:#a3be8c;">/</span><span>)</span><span style="color:#81a1c1;">.</span><span>each </span><span style="color:#81a1c1;">do </span><span>|record|
+</span><span>  </span><span style="color:#81a1c1;">next if</span><span> record </span><span style="color:#81a1c1;">== </span><span style="color:#a3be8c;">&quot;&quot; </span><span style="color:#616e88;"># split makes a blank one for some reason
+</span><span>  record </span><span style="color:#81a1c1;">=</span><span> record</span><span style="color:#81a1c1;">.</span><span>split(</span><span style="color:#a3be8c;">&quot;</span><span style="color:#ebcb8b;">\n</span><span style="color:#a3be8c;">&quot;</span><span>)
+</span><span>  header</span><span style="color:#eceff4;">,</span><span> sequence </span><span style="color:#81a1c1;">=</span><span> record[</span><span style="color:#b48ead;">0</span><span>]</span><span style="color:#eceff4;">,</span><span> record[</span><span style="color:#b48ead;">1</span><span style="color:#81a1c1;">..-</span><span style="color:#b48ead;">1</span><span>]
+</span><span>  db[header] </span><span style="color:#81a1c1;">=</span><span> sequence</span><span style="color:#81a1c1;">.</span><span>join(</span><span style="color:#a3be8c;">&#39;&#39;</span><span>)
+</span><span style="color:#81a1c1;">end
+</span><span>
+</span><span style="color:#616e88;"># Read query sequence, and compress.
+</span><span>query_sequence </span><span style="color:#81a1c1;">=</span><span> \
+</span><span>  </span><span style="color:#8fbcbb;">File</span><span style="color:#81a1c1;">.new</span><span>(query)</span><span style="color:#81a1c1;">.</span><span>read</span><span style="color:#81a1c1;">.</span><span>split(</span><span style="color:#a3be8c;">/</span><span style="color:#ebcb8b;">^&gt;</span><span style="color:#a3be8c;">/</span><span>)[</span><span style="color:#b48ead;">1</span><span>]</span><span style="color:#81a1c1;">.</span><span>split(</span><span style="color:#a3be8c;">&quot;</span><span style="color:#ebcb8b;">\n</span><span style="color:#a3be8c;">&quot;</span><span>)[</span><span style="color:#b48ead;">1</span><span style="color:#81a1c1;">..-</span><span style="color:#b48ead;">1</span><span>]</span><span style="color:#81a1c1;">.</span><span>join(</span><span style="color:#a3be8c;">&#39;&#39;</span><span>) </span><span style="color:#616e88;"># :D
+</span><span>
+</span><span>
+</span><span style="color:#616e88;"># Find database sequence is greatest reduction in size
+</span><span>
+</span><span style="color:#81a1c1;">def </span><span style="color:#88c0d0;">query</span><span>(query</span><span style="color:#eceff4;">, </span><span>db)
+</span><span>  query_size </span><span style="color:#81a1c1;">=</span><span> deflate(query)</span><span style="color:#81a1c1;">.</span><span>length
+</span><span>  best</span><span style="color:#eceff4;">,</span><span> winner </span><span style="color:#81a1c1;">= </span><span style="color:#b48ead;">0</span><span style="color:#eceff4;">, </span><span style="color:#a3be8c;">&#39;&#39;
+</span><span>
+</span><span>  db</span><span style="color:#81a1c1;">.</span><span>each </span><span style="color:#81a1c1;">do </span><span>|k</span><span style="color:#eceff4;">, </span><span>seq|
+</span><span>    </span><span style="color:#616e88;"># Compress DB sequence
+</span><span>    solo </span><span style="color:#81a1c1;">=</span><span> deflate(seq)</span><span style="color:#81a1c1;">.</span><span>length
+</span><span>
+</span><span>    </span><span style="color:#616e88;"># Compress both, together
+</span><span>    together </span><span style="color:#81a1c1;">=</span><span> deflate(seq </span><span style="color:#81a1c1;">+</span><span> query)</span><span style="color:#81a1c1;">.</span><span>length
+</span><span>
+</span><span>    </span><span style="color:#616e88;"># Score
+</span><span>    </span><span style="color:#81a1c1;">if</span><span> together </span><span style="color:#81a1c1;">&lt; </span><span>(solo </span><span style="color:#81a1c1;">+</span><span> query_size)
+</span><span>      score </span><span style="color:#81a1c1;">= </span><span>(solo </span><span style="color:#81a1c1;">+</span><span> query_size </span><span style="color:#81a1c1;">-</span><span> together)</span><span style="color:#81a1c1;">/</span><span>seq</span><span style="color:#81a1c1;">.</span><span>length</span><span style="color:#81a1c1;">.</span><span style="font-style:italic;color:#88c0d0;">to_f </span><span style="color:#616e88;"># Normalize by subject length
+</span><span>      </span><span style="color:#81a1c1;">if</span><span> score </span><span style="color:#81a1c1;">&gt;</span><span> best
+</span><span>        best </span><span style="color:#81a1c1;">=</span><span> score
+</span><span>        winner </span><span style="color:#81a1c1;">=</span><span> k
+</span><span>      </span><span style="color:#81a1c1;">end
+</span><span>    </span><span style="color:#81a1c1;">end
+</span><span>
+</span><span>  </span><span style="color:#81a1c1;">end
+</span><span>  {:score </span><span style="color:#eceff4;">=&gt;</span><span> best</span><span style="color:#eceff4;">, </span><span>:hit </span><span style="color:#eceff4;">=&gt;</span><span> winner}
+</span><span style="color:#81a1c1;">end
+</span><span>
+</span><span>result </span><span style="color:#81a1c1;">=</span><span> query(query_sequence</span><span style="color:#eceff4;">,</span><span> db)
+</span><span style="font-style:italic;color:#88c0d0;">puts</span><span> result[:hit]
+</span></code></pre>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr />
+      (c) 2011-2025 Austin G. Davis-Richardson
+      <br />
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      <br />
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+</body>
+
+</html>

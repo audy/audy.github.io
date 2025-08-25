@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    :root {
+      --nord0: #2E3440;
+      /* darkest bg */
+      --nord1: #3B4252;
+      --nord2: #434C5E;
+      --nord3: #4C566A;
+      /* dim fg */
+      --nord4: #D8DEE9;
+      /* fg */
+      --nord5: #E5E9F0;
+      --nord6: #ECEFF4;
+      /* lightest */
+      --nord7: #8FBCBB;
+      /* cyan */
+      --nord8: #88C0D0;
+      /* light blue */
+      --nord9: #81A1C1;
+      /* blue */
+      --nord10: #5E81AC;
+      /* deep blue */
+      --nord11: #BF616A;
+      /* red */
+      --nord12: #D08770;
+      /* orange */
+      --nord13: #EBCB8B;
+      /* yellow */
+      --nord14: #A3BE8C;
+      /* green */
+      --nord15: #B48EAD;
+      /* purple */
+
+      --link-color: var(--nord8);
+      --text-color: var(--nord4);
+      --bg-color: var(--nord1);
+      --dimmed: var(--nord4);
+    }
+
+    /* Base layout */
+    html,
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Consolas", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    /* Inline code */
+    :not(pre)>code {
+      border-radius: 4px;
+      padding: 2px 4px;
+      background-color: var(--nord2);
+      color: var(--nord13);
+      font-style: normal;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Horizontal rule */
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: var(--nord3);
+      margin: 1.5em 0;
+    }
+
+    /* Code blocks */
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--nord1);
+      color: var(--nord6);
+      font-family: "Consolas", monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--nord6);
+    }
+
+    ;
+
+    /* Markdown-style heading prefixes */
+    h1::before {
+      color: var(--nord15);
+      content: "# ";
+    }
+
+    h2::before {
+      color: var(--nord15);
+      content: "## ";
+    }
+
+    h3::before {
+      color: var(--nord15);
+      content: "### ";
+    }
+
+    h4::before {
+      color: var(--nord15);
+      content: "#### ";
+    }
+
+    h5::before {
+      color: var(--nord15);
+      content: "##### ";
+    }
+
+    h6::before {
+      color: var(--nord15);
+      content: "###### ";
+    }
+
+    /* Lists */
+    li {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "* ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ". ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    blockquote {
+      color: var(--nord8);
+    }
+
+    /* Dimmed text */
+    .dimmed {
+      color: var(--dimmed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        font-size: 18px;
+      }
+
+      body {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      pre {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 1.2em;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>
+      <a href="/">agdr.org</a>
+    </h1>
+  </div>
+  <hr />
+
+  <div>
+    
+
+<h2 class="title">
+  Pypette
+</h2>
+
+<p class="subtitle dimmed">2011-02-06</p>
+
+<h2 id="bioinformatics-algorithms-implemented-in-c-wrapped-in-python">Bioinformatics algorithms implemented in C, wrapped in Python.</h2>
+<p>Bioinformatics applications are naturally targeted at solving a specific
+problem. If a researcher creates a new protocol, he or she must a.) adjust that
+protocol to the software b.) write software specific to that problem or c.) wait
+for someone to write software specific to that problem. The goal of Pypette is
+to make option b easier by implementing common bioinformatics algorithms that
+can be mixed and matched.</p>
+<h2 id="example-problem">Example problem:</h2>
+<p>A researcher wants to perform a <em>de novo</em> assembly from short reads using a
+de-Brujin graph approach similar to Velvet, taking into account quality scores.
+The short reads came from an environmental sample amplified with random hexamers
+and is thus a metagenomic sample. The researcher estimates that there are 4
+prominent organisms in the sample and each should have a genome coverage of
+about 18x. Before assembling, the researcher wishes to bin the reads according
+to which organism the read is most likely to belong to using the hidden-markov
+model approach (via: <a href="http://ivory.idyll.org/blog/aug-10/assembly-part-i.html">Assembly is hard because it's not
+decomposable</a>)</p>
+<p>This procedure would be complicated to implement from scratch. As a result the
+researcher may either give up, change the experiment, or attempt to carry out
+the procedure by adapting existing tools.</p>
+<h2 id="solution">Solution:</h2>
+<p>One way to make this easier would be to implement sensible interfaces (APIs) to
+commonly used bioinformatics programs allowing them to be combined in a
+programming language.</p>
+<p>The following example is contrived and not implemented. It simply represents an
+ideal scenario.</p>
+<p>In this example solution, the inputs and outputs of the read binner and
+assembler are easily combined using an imaginary Python library.</p>
+<pre data-lang="python" style="background-color:#2e3440;color:#d8dee9;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#81a1c1;">from </span><span>pypette </span><span style="color:#81a1c1;">import </span><span>debrujin</span><span style="color:#eceff4;">, </span><span>markov</span><span style="color:#eceff4;">, </span><span>fastq
+</span><span>
+</span><span style="color:#616e88;"># Load the reads
+</span><span style="color:#81a1c1;">with </span><span style="font-style:italic;color:#88c0d0;">open</span><span>(</span><span style="color:#a3be8c;">&quot;reads.fastq&quot;</span><span>) </span><span style="color:#81a1c1;">as </span><span>handle:
+</span><span>    reads </span><span style="color:#81a1c1;">= </span><span>fastq</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">load</span><span>(handle)
+</span><span>
+</span><span style="color:#616e88;"># Cluster reads
+</span><span>reads_binned </span><span style="color:#81a1c1;">= </span><span>markov</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">cluster</span><span>(reads</span><span style="color:#eceff4;">, </span><span>probability</span><span style="color:#81a1c1;">=lambda </span><span>x: x</span><span style="color:#81a1c1;">.</span><span>qual</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">to_f</span><span>()</span><span style="color:#eceff4;">, </span><span>bins</span><span style="color:#81a1c1;">=</span><span style="color:#b48ead;">4</span><span>)
+</span><span>
+</span><span style="color:#616e88;"># Construction of debrujin graph per bin
+</span><span>graphs </span><span style="color:#81a1c1;">= </span><span>{}
+</span><span style="color:#81a1c1;">for </span><span>n</span><span style="color:#eceff4;">, </span><span style="font-style:italic;color:#88c0d0;">bin </span><span style="color:#81a1c1;">in </span><span style="font-style:italic;color:#88c0d0;">enumerate</span><span>(reads_binned):
+</span><span>    graphs[n] </span><span style="color:#81a1c1;">= </span><span style="color:#88c0d0;">debrujin</span><span>(</span><span style="font-style:italic;color:#88c0d0;">bin</span><span style="color:#eceff4;">, </span><span>probability</span><span style="color:#81a1c1;">=lambda </span><span>x: x</span><span style="color:#81a1c1;">.</span><span>qual</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">to_f</span><span>()</span><span style="color:#eceff4;">, </span><span>k</span><span style="color:#81a1c1;">=</span><span style="color:#b48ead;">31</span><span>)
+</span><span>
+</span><span style="color:#616e88;"># Solve graph, convert to contigs
+</span><span>contigs </span><span style="color:#81a1c1;">= </span><span>{n</span><span style="color:#eceff4;">: </span><span>graphs[n]</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">contigs</span><span>() </span><span style="color:#81a1c1;">for </span><span>n </span><span style="color:#81a1c1;">in </span><span>graphs</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">solve</span><span>()}
+</span><span>
+</span><span style="color:#616e88;"># Output contig files in fasta format
+</span><span style="color:#81a1c1;">for </span><span>n</span><span style="color:#eceff4;">, </span><span>contig_group </span><span style="color:#81a1c1;">in </span><span>contigs</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">items</span><span>():
+</span><span>    </span><span style="color:#81a1c1;">with </span><span style="font-style:italic;color:#88c0d0;">open</span><span>(</span><span style="color:#a3be8c;">&quot;contigs-</span><span style="color:#ebcb8b;">{n}</span><span style="color:#a3be8c;">.fa&quot;</span><span style="color:#eceff4;">, </span><span style="color:#a3be8c;">&quot;w&quot;</span><span>) </span><span style="color:#81a1c1;">as </span><span>handle:
+</span><span>        </span><span style="color:#81a1c1;">for </span><span>contig </span><span style="color:#81a1c1;">in </span><span>contig_group:
+</span><span>            handle</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">write</span><span>(contig</span><span style="color:#81a1c1;">.</span><span style="color:#88c0d0;">fasta</span><span>())
+</span></code></pre>
+<p><em>or something like that...</em></p>
+<h2 id="voila">Voila!</h2>
+<p>This is a super over-simplified example but it illustrates the idea.</p>
+<p>The user was able to craft a complex bioinformatics application with very little
+code without having to implement the underlying bioinformatics algorithms, just
+customize them.</p>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr />
+      (c) 2011-2025 Austin G. Davis-Richardson
+      <br />
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      <br />
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+</body>
+
+</html>

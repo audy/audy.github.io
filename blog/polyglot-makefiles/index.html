@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    :root {
+      --nord0: #2E3440;
+      /* darkest bg */
+      --nord1: #3B4252;
+      --nord2: #434C5E;
+      --nord3: #4C566A;
+      /* dim fg */
+      --nord4: #D8DEE9;
+      /* fg */
+      --nord5: #E5E9F0;
+      --nord6: #ECEFF4;
+      /* lightest */
+      --nord7: #8FBCBB;
+      /* cyan */
+      --nord8: #88C0D0;
+      /* light blue */
+      --nord9: #81A1C1;
+      /* blue */
+      --nord10: #5E81AC;
+      /* deep blue */
+      --nord11: #BF616A;
+      /* red */
+      --nord12: #D08770;
+      /* orange */
+      --nord13: #EBCB8B;
+      /* yellow */
+      --nord14: #A3BE8C;
+      /* green */
+      --nord15: #B48EAD;
+      /* purple */
+
+      --link-color: var(--nord8);
+      --text-color: var(--nord4);
+      --bg-color: var(--nord1);
+      --dimmed: var(--nord4);
+    }
+
+    /* Base layout */
+    html,
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Consolas", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    /* Inline code */
+    :not(pre)>code {
+      border-radius: 4px;
+      padding: 2px 4px;
+      background-color: var(--nord2);
+      color: var(--nord13);
+      font-style: normal;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Horizontal rule */
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: var(--nord3);
+      margin: 1.5em 0;
+    }
+
+    /* Code blocks */
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--nord1);
+      color: var(--nord6);
+      font-family: "Consolas", monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--nord6);
+    }
+
+    ;
+
+    /* Markdown-style heading prefixes */
+    h1::before {
+      color: var(--nord15);
+      content: "# ";
+    }
+
+    h2::before {
+      color: var(--nord15);
+      content: "## ";
+    }
+
+    h3::before {
+      color: var(--nord15);
+      content: "### ";
+    }
+
+    h4::before {
+      color: var(--nord15);
+      content: "#### ";
+    }
+
+    h5::before {
+      color: var(--nord15);
+      content: "##### ";
+    }
+
+    h6::before {
+      color: var(--nord15);
+      content: "###### ";
+    }
+
+    /* Lists */
+    li {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "* ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ". ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    blockquote {
+      color: var(--nord8);
+    }
+
+    /* Dimmed text */
+    .dimmed {
+      color: var(--dimmed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        font-size: 18px;
+      }
+
+      body {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      pre {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 1.2em;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>
+      <a href="/">agdr.org</a>
+    </h1>
+  </div>
+  <hr />
+
+  <div>
+    
+
+<h2 class="title">
+  Polyglot Makefiles
+</h2>
+
+<p class="subtitle dimmed">2020-05-14</p>
+
+<p>Did you know that you can change the shell in a <code>Makefile</code>? It's true. I found
+this out when trying to use bash instead of the default <code>/bin/sh</code> by setting
+<code>SHELL</code>.</p>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#88c0d0;">.ONESHELL</span><span style="color:#81a1c1;">:
+</span><span style="color:#88c0d0;">bash</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">bash
+</span><span style="color:#88c0d0;">bash</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#616e88;"># note: the double dollar-sign is required because Make substitues $variables
+</span><span>	</span><span style="color:#81a1c1;">export </span><span>greeting</span><span style="color:#81a1c1;">=</span><span style="color:#a3be8c;">&quot;¡hola&quot;
+</span><span>	</span><span style="color:#88c0d0;">echo </span><span style="color:#a3be8c;">&quot;</span><span style="color:#81a1c1;">$${</span><span>greeting</span><span style="color:#81a1c1;">}</span><span style="color:#a3be8c;">, bash!&quot;
+</span></code></pre>
+<p>Now typing <code>make bash</code> will print <code>¡hola, bash!</code></p>
+<p>What else is possible? Can I use other programming languages as the shell?  Is
+it possible to write in-line Python in a <code>Makefile</code>?</p>
+<h3 id="python">Python</h3>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#88c0d0;">.ONESHELL</span><span style="color:#81a1c1;">:
+</span><span style="color:#88c0d0;">python</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">python3
+</span><span style="color:#88c0d0;">python</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">greeting</span><span> = </span><span style="color:#a3be8c;">&quot;hello&quot;
+</span><span>	</span><span style="color:#88c0d0;">print</span><span>(f</span><span style="color:#a3be8c;">&quot;{greeting}, python!&quot;</span><span>)
+</span></code></pre>
+<p><a href="https://www.youtube.com/watch?v=BtyjaSqdh2I">Yes, this is possible</a></p>
+<p>Typing <code>make python</code> will print <code>hello, python!</code>.</p>
+<p>Notice that there is a variable <code>.ONESHELL</code> being set. Normally, <code>make</code> will
+evaluate each command in a separate shell meaning that, in this example,
+<code>greeting</code> would be undefined in the second line. Adding <code>.ONESHELL</code> to the top
+of your <code>Makefile</code>, as recommended by <a href="https://tech.davis-hansson.com/p/make/">someone else whose last name begins with
+Davis-* and blogs about <code>make</code></a>,
+causes multi-line code in the Make directive to be evaluated in a single call
+to Python.</p>
+<h3 id="r">R</h3>
+<p>What about writing R in-line in a Makefile? Note the addition of <code>.SHELLFLAGS</code>.
+By default, <code>make</code> runs <code>SHELL -c &quot;your\nscript\nhere&quot;</code> which is not compatible
+R. To run a script in-line from a command in R, you use <code>-e</code>:</p>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#88c0d0;">R</span><span style="color:#81a1c1;">:</span><span> .SHELLFLAGS </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">-e
+</span><span style="color:#88c0d0;">R</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">Rscript
+</span><span style="color:#88c0d0;">R</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">greeting</span><span> = </span><span style="color:#a3be8c;">&quot;bonjour&quot;
+</span><span>	</span><span style="color:#88c0d0;">message</span><span>(paste0(greeting, </span><span style="color:#a3be8c;">&quot;, R!&quot;</span><span>))
+</span></code></pre>
+<p>This is equivalent to running <code>Rscript -e 'greeting = &quot;bounjour&quot;; message(paste0(greeting, &quot;, R!&quot;));'</code></p>
+<p>Now you can write a pipeline that combines R and Python in a single file 🎉</p>
+<h3 id="bring-in-the-containers">Bring in the containers</h3>
+<p>Data analysis pipelines often have
+<a href="https://github.com/thackl/gggenomes#motivation--concept">adventurous</a>
+dependencies. Docker made all of that a lot easier but writing <code>docker run ...</code>
+can be cumbersome. What if we could make Docker the interpreter and write
+commands to be executed inside the container in-line as well?</p>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#88c0d0;">docker</span><span style="color:#81a1c1;">:</span><span> .SHELLFLAGS = run --volume </span><span style="color:#81a1c1;">$(</span><span style="color:#88c0d0;">shell pwd</span><span style="color:#81a1c1;">)</span><span>:/workdir --rm --workdir /workdir --entrypoint /bin/bash ubuntu -c
+</span><span style="color:#88c0d0;">docker</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">docker
+</span><span style="color:#88c0d0;">docker</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">echo </span><span style="color:#a3be8c;">&quot;hello, </span><span style="color:#81a1c1;">$$(</span><span>uname -a</span><span style="color:#81a1c1;">)</span><span style="color:#a3be8c;">!&quot;
+</span></code></pre>
+<p>Again, this is possible. Running <code>make docker</code> will run <code>echo ...</code> in a Docker
+container running Ubuntu. Note the <code>--volume</code> flag which will mount the current
+working directory as the container's working directory meaning that files can
+be read/created between your local filesystem and that of the container. So
+build artifacts can be shared between make directives.</p>
+<pre style="background-color:#2e3440;color:#d8dee9;"><code><span>hello, Linux 453c728113d6 4.19.76-linuxkit #1 SMP Fri Apr 3 15:53:26 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux!
+</span></code></pre>
+<h3 id="why">Why?</h3>
+<p>This started as an experiment to see what is possible with <code>make</code>. But it was
+motivated by a real world problem: I often need to combine tools across
+programming languages and environments to run data analysis pipelines. I like
+to automate things and <code>make</code> is a great tool for doing so. Having everything
+in-line is more readable and having everything in a single file means that I
+have to jump between fewer tabs to understand the pipeline itself.</p>
+<p>The ability to write commands that get executed in Docker means that I have to
+spend less time figuring out how to get a bunch of dependencies installed in a
+single container which becomes increasingly difficult as the number of
+dependencies increases (especially if you work in Bioinformatics).</p>
+<h3 id="complete-example">Complete Example</h3>
+<p><strong>note</strong>: Some of these features only work on <code>make 4.+</code> which I installed
+using <a href="https://brew.sh">Homebrew</a>. These examples do not work using <code>make 3.x</code>
+which is comes with macOS Catalina.</p>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#88c0d0;">.ONESHELL</span><span style="color:#81a1c1;">:
+</span><span style="color:#88c0d0;">.SILENT</span><span style="color:#81a1c1;">:
+</span><span>
+</span><span style="color:#88c0d0;">main</span><span style="color:#81a1c1;">: \
+</span><span style="color:#a3be8c;">	python </span><span style="color:#81a1c1;">\
+</span><span style="color:#a3be8c;">	ruby </span><span style="color:#81a1c1;">\
+</span><span style="color:#a3be8c;">	R </span><span style="color:#81a1c1;">\
+</span><span style="color:#a3be8c;">	bash </span><span style="color:#81a1c1;">\
+</span><span style="color:#a3be8c;">	docker
+</span><span>
+</span><span style="color:#88c0d0;">docker</span><span style="color:#81a1c1;">:</span><span> .SHELLFLAGS </span><span style="color:#81a1c1;">= </span><span style="color:#a3be8c;">run --rm --entrypoint /bin/bash ubuntu -c
+</span><span style="color:#88c0d0;">docker</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">docker
+</span><span style="color:#88c0d0;">docker</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">echo </span><span style="color:#a3be8c;">&quot;hello, </span><span style="color:#81a1c1;">$$(</span><span>uname -a</span><span style="color:#81a1c1;">)</span><span style="color:#a3be8c;">!&quot;
+</span><span>
+</span><span style="color:#88c0d0;">python</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">python3
+</span><span style="color:#88c0d0;">python</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">greeting</span><span> = </span><span style="color:#a3be8c;">&quot;hello&quot;
+</span><span>	</span><span style="color:#88c0d0;">print</span><span>(f</span><span style="color:#a3be8c;">&quot;{greeting}, python!&quot;</span><span>)
+</span><span>
+</span><span style="color:#88c0d0;">ruby</span><span style="color:#81a1c1;">:</span><span> .SHELLFLAGS </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">-e
+</span><span style="color:#88c0d0;">ruby</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">ruby
+</span><span style="color:#88c0d0;">ruby</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">greeting</span><span> = </span><span style="color:#a3be8c;">&quot;labas&quot;
+</span><span>	</span><span style="color:#88c0d0;">puts </span><span style="color:#a3be8c;">&quot;#{greeting}, ruby!&quot;
+</span><span>
+</span><span style="color:#88c0d0;">R</span><span style="color:#81a1c1;">:</span><span> .SHELLFLAGS </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">-e
+</span><span style="color:#88c0d0;">R</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">Rscript
+</span><span style="color:#88c0d0;">R</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">greeting</span><span> = </span><span style="color:#a3be8c;">&quot;bonjour&quot;
+</span><span>	</span><span style="color:#88c0d0;">message</span><span>(paste0(greeting, </span><span style="color:#a3be8c;">&quot;, R!&quot;</span><span>))
+</span><span>
+</span><span style="color:#88c0d0;">bash</span><span style="color:#81a1c1;">:</span><span> .SHELLFLAGS </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">-euo pipefail -c
+</span><span style="color:#88c0d0;">bash</span><span style="color:#81a1c1;">:</span><span> SHELL </span><span style="color:#81a1c1;">:= </span><span style="color:#a3be8c;">bash
+</span><span style="color:#88c0d0;">bash</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#81a1c1;">export </span><span>greeting</span><span style="color:#81a1c1;">=</span><span style="color:#a3be8c;">&quot;¡hola&quot;
+</span><span>	</span><span style="color:#88c0d0;">echo </span><span style="color:#a3be8c;">&quot;</span><span style="color:#81a1c1;">$${</span><span>greeting</span><span style="color:#81a1c1;">}</span><span style="color:#a3be8c;">, bash!&quot;
+</span></code></pre>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr />
+      (c) 2011-2025 Austin G. Davis-Richardson
+      <br />
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      <br />
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+</body>
+
+</html>

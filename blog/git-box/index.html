@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    :root {
+      --nord0: #2E3440;
+      /* darkest bg */
+      --nord1: #3B4252;
+      --nord2: #434C5E;
+      --nord3: #4C566A;
+      /* dim fg */
+      --nord4: #D8DEE9;
+      /* fg */
+      --nord5: #E5E9F0;
+      --nord6: #ECEFF4;
+      /* lightest */
+      --nord7: #8FBCBB;
+      /* cyan */
+      --nord8: #88C0D0;
+      /* light blue */
+      --nord9: #81A1C1;
+      /* blue */
+      --nord10: #5E81AC;
+      /* deep blue */
+      --nord11: #BF616A;
+      /* red */
+      --nord12: #D08770;
+      /* orange */
+      --nord13: #EBCB8B;
+      /* yellow */
+      --nord14: #A3BE8C;
+      /* green */
+      --nord15: #B48EAD;
+      /* purple */
+
+      --link-color: var(--nord8);
+      --text-color: var(--nord4);
+      --bg-color: var(--nord1);
+      --dimmed: var(--nord4);
+    }
+
+    /* Base layout */
+    html,
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Consolas", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    /* Inline code */
+    :not(pre)>code {
+      border-radius: 4px;
+      padding: 2px 4px;
+      background-color: var(--nord2);
+      color: var(--nord13);
+      font-style: normal;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Horizontal rule */
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: var(--nord3);
+      margin: 1.5em 0;
+    }
+
+    /* Code blocks */
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--nord1);
+      color: var(--nord6);
+      font-family: "Consolas", monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--nord6);
+    }
+
+    ;
+
+    /* Markdown-style heading prefixes */
+    h1::before {
+      color: var(--nord15);
+      content: "# ";
+    }
+
+    h2::before {
+      color: var(--nord15);
+      content: "## ";
+    }
+
+    h3::before {
+      color: var(--nord15);
+      content: "### ";
+    }
+
+    h4::before {
+      color: var(--nord15);
+      content: "#### ";
+    }
+
+    h5::before {
+      color: var(--nord15);
+      content: "##### ";
+    }
+
+    h6::before {
+      color: var(--nord15);
+      content: "###### ";
+    }
+
+    /* Lists */
+    li {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "* ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ". ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    blockquote {
+      color: var(--nord8);
+    }
+
+    /* Dimmed text */
+    .dimmed {
+      color: var(--dimmed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        font-size: 18px;
+      }
+
+      body {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      pre {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 1.2em;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>
+      <a href="/">agdr.org</a>
+    </h1>
+  </div>
+  <hr />
+
+  <div>
+    
+
+<h2 class="title">
+  Git Dropbox with Gitreceive
+</h2>
+
+<p class="subtitle dimmed">2014-10-24</p>
+
+<h3 id="or-how-to-setup-a-server-that-will-automatically-receive-and-save-anything-you-git-push-to-it">Or, &quot;How to setup a server that will automatically receive and save anything you <code>git push</code> to it.&quot;</h3>
+<p>I wanted to host my git repositories on a private server but didn't want to
+setup something big like Gitlab or Gitorious to do it. I also wanted to be able
+to <code>git push</code> anything and have the server automatically create a new git
+repository and store the data.</p>
+<p>The easiest way I found to do this was to use
+<a href="https://github.com/progrium/gitreceive">gitreceive</a> by <a href="http://progrium.com/blog/">Jeff
+Lindsay</a> who created
+<a href="https://github.com/progrium/gitreceive">Dokku</a>.</p>
+<p>I followed the instructions for setting up gitreceive but ran into a small
+hangup when trying to push a repository:</p>
+<pre data-lang="sh" style="background-color:#2e3440;color:#d8dee9;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#88c0d0;">$</span><span> gp home master
+</span><span style="color:#88c0d0;">Counting</span><span> objects: 1032, done.
+</span><span style="color:#88c0d0;">Delta</span><span> compression using up to 4 threads.
+</span><span style="color:#88c0d0;">Compressing</span><span> objects: 100</span><span style="color:#81a1c1;">%</span><span> (1020/1020)</span><span style="color:#88c0d0;">,</span><span> done.
+</span><span style="color:#88c0d0;">Writing</span><span> objects: 100</span><span style="color:#81a1c1;">%</span><span> (1032/1032)</span><span style="color:#88c0d0;">,</span><span> 5.04 MiB </span><span style="color:#81a1c1;">| </span><span style="color:#88c0d0;">1.20</span><span> MiB/s, done.
+</span><span style="color:#88c0d0;">Total</span><span> 1032 (delta 82)</span><span style="color:#88c0d0;">,</span><span> reused 0 (delta 0)
+</span><span style="color:#88c0d0;">To</span><span> git@foo.co:bar
+</span><span> </span><span style="color:#81a1c1;">! </span><span style="color:#88c0d0;">[remote</span><span> rejected] master -</span><span style="color:#81a1c1;">&gt;</span><span> master (pre-receive hook declined)
+</span><span style="color:#88c0d0;">error:</span><span> failed to push some refs to </span><span style="color:#a3be8c;">&#39;git@foo.co:bar&#39;
+</span></code></pre>
+<p>The error <code>pre-receive hook declined</code> means that the receiver script that
+gitreceive installs to <code>/home/git</code> was crashing. However, the default receiver
+script does nothing which makes it odd that it would crash. The cause of the
+problem is that <a href="https://github.com/progrium/gitreceive/blob/ff8d03ec8d308f6dec8142b9c4e8518591d6e32f/gitreceive#L115">gitreceive is piping the output of <code>git archive</code> to the
+receiver
+script</a>.
+The receiver script does nothing so exits before <code>cat</code> cat finish. This causes
+<code>cat</code>, then gitreceive to crash with a non-zero exit status causing the
+<code>pre-receive hook declined</code> error.</p>
+<p>The solution to this is simple. Add the following line to the receiver script:</p>
+<pre data-lang="sh" style="background-color:#2e3440;color:#d8dee9;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#88c0d0;">cat</span><span> /dev/stdin </span><span style="color:#81a1c1;">&gt;</span><span> /dev/null
+</span></code></pre>
+<p>This will wait for gitreceive to finish piping the archived repository before
+exiting. Now you can push a new repository and gitreceive will automatically
+create and receive it.</p>
+<pre style="background-color:#2e3440;color:#d8dee9;"><code><span>git push home master
+</span><span>Counting objects: 1032, done.  Delta compression using up to 4 threads.
+</span><span>Compressing objects: 100% (1020/1020), done.
+</span><span>Writing objects: 100% (1032/1032), 5.04 MiB | 1.20 MiB/s, done.
+</span><span>Total 1032 (delta 82), reused 0 (delta 0)
+</span><span> __________________
+</span><span>&lt; Have a nice day! &gt;
+</span><span> ------------------
+</span><span>        \   ^__^
+</span><span>         \  (oo)\_______
+</span><span>            (__)\       )\/\
+</span><span>                ||----w |
+</span><span>                ||     ||
+</span><span>To git@foo.co:bar
+</span><span>* [new branch]      master -&gt; master
+</span></code></pre>
+<p>Note: you do <strong>not</strong> need to save a copy of the archive that gitreceive is
+piping into the receiver script. The repository's data is still being saved in
+<code>/home/git/&lt;reponame&gt;</code>. You can verify this by running <code>git clone</code>.</p>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr />
+      (c) 2011-2025 Austin G. Davis-Richardson
+      <br />
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      <br />
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+</body>
+
+</html>

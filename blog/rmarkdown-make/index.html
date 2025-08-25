@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>~ Austin G. Davis-Richardson</title>
+
+  <style type="text/css">
+    :root {
+      --nord0: #2E3440;
+      /* darkest bg */
+      --nord1: #3B4252;
+      --nord2: #434C5E;
+      --nord3: #4C566A;
+      /* dim fg */
+      --nord4: #D8DEE9;
+      /* fg */
+      --nord5: #E5E9F0;
+      --nord6: #ECEFF4;
+      /* lightest */
+      --nord7: #8FBCBB;
+      /* cyan */
+      --nord8: #88C0D0;
+      /* light blue */
+      --nord9: #81A1C1;
+      /* blue */
+      --nord10: #5E81AC;
+      /* deep blue */
+      --nord11: #BF616A;
+      /* red */
+      --nord12: #D08770;
+      /* orange */
+      --nord13: #EBCB8B;
+      /* yellow */
+      --nord14: #A3BE8C;
+      /* green */
+      --nord15: #B48EAD;
+      /* purple */
+
+      --link-color: var(--nord8);
+      --text-color: var(--nord4);
+      --bg-color: var(--nord1);
+      --dimmed: var(--nord4);
+    }
+
+    /* Base layout */
+    html,
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Consolas", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    /* Inline code */
+    :not(pre)>code {
+      border-radius: 4px;
+      padding: 2px 4px;
+      background-color: var(--nord2);
+      color: var(--nord13);
+      font-style: normal;
+    }
+
+    /* Links */
+    a {
+      color: var(--link-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Horizontal rule */
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: var(--nord3);
+      margin: 1.5em 0;
+    }
+
+    /* Code blocks */
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--nord1);
+      color: var(--nord6);
+      font-family: "Consolas", monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--nord6);
+    }
+
+    ;
+
+    /* Markdown-style heading prefixes */
+    h1::before {
+      color: var(--nord15);
+      content: "# ";
+    }
+
+    h2::before {
+      color: var(--nord15);
+      content: "## ";
+    }
+
+    h3::before {
+      color: var(--nord15);
+      content: "### ";
+    }
+
+    h4::before {
+      color: var(--nord15);
+      content: "#### ";
+    }
+
+    h5::before {
+      color: var(--nord15);
+      content: "##### ";
+    }
+
+    h6::before {
+      color: var(--nord15);
+      content: "###### ";
+    }
+
+    /* Lists */
+    li {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "* ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ". ";
+      color: var(--nord15);
+      margin-left: -1.2em;
+    }
+
+    blockquote {
+      color: var(--nord8);
+    }
+
+    /* Dimmed text */
+    .dimmed {
+      color: var(--dimmed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        font-size: 18px;
+      }
+
+      body {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      pre {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 1.2em;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>
+      <a href="/">agdr.org</a>
+    </h1>
+  </div>
+  <hr />
+
+  <div>
+    
+
+<h2 class="title">
+  RMarkdown + Make
+</h2>
+
+<p class="subtitle dimmed">2014-12-22</p>
+
+<p>Lately, I've been using Rmarkdown + Make to perform statistical analysis and
+generate reports.</p>
+<p>I saw Shaun Jackman's slideshow &quot;<a href="https://sjackman.github.io/open-science/#/open-reproducible-science">Open, reproducible science using Make,
+RMarkdown and Pandoc</a>&quot; and thought it was lacking a key example: how do you
+use Make to generate reports from RMarkdown files? So I put together a <a href="https://github.com/audy/knitr-make">little
+recipe</a> for doing just that. It is a basic project directory structure and a
+tiny Makefile that automatically renders Rmarkdown files to HTML.</p>
+<p>In the example repo, there is a <code>Makefile</code> which defines a couple of rules for
+converting <code>.md</code> files into <code>.pdf</code> and <code>.html</code> files:</p>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#81a1c1;">%</span><span style="color:#88c0d0;">.html</span><span style="color:#81a1c1;">: %</span><span style="color:#a3be8c;">.Rmd
+</span><span>	</span><span style="color:#81a1c1;">@</span><span style="color:#88c0d0;">Rscript</span><span> -e </span><span style="color:#a3be8c;">&quot;rmarkdown::render(&#39;</span><span style="color:#81a1c1;">$&lt;</span><span style="color:#a3be8c;">&#39;)&quot;
+</span><span>
+</span><span style="color:#81a1c1;">%</span><span style="color:#88c0d0;">.pdf</span><span style="color:#81a1c1;">: %</span><span style="color:#a3be8c;">.Rmd
+</span><span>	</span><span style="color:#81a1c1;">@</span><span style="color:#88c0d0;">Rscript</span><span> -e </span><span style="color:#a3be8c;">&quot;rmarkdown::render(&#39;</span><span style="color:#81a1c1;">$&lt;</span><span style="color:#a3be8c;">&#39;)&quot;
+</span></code></pre>
+<p>After adding this to your <code>Makefile</code> you can type <code>make my-analysis.pdf</code> to
+render <code>my-analysis.md</code>.</p>
+<p>To automatically convert all <code>.md</code> files to <code>.pdf</code>, add the following lines
+which will create a target <code>.pdf</code> file for all of the <code>.Rmd</code> files in the
+current working directory:</p>
+<pre data-lang="makefile" style="background-color:#2e3440;color:#d8dee9;" class="language-makefile "><code class="language-makefile" data-lang="makefile"><span style="color:#616e88;"># define targets
+</span><span>SOURCES</span><span style="color:#81a1c1;">=$(</span><span style="color:#88c0d0;">shell find</span><span style="color:#a3be8c;"> notebooks</span><span> -name </span><span style="color:#81a1c1;">*</span><span style="color:#a3be8c;">.Rmd</span><span style="color:#81a1c1;">)
+</span><span>TARGETS</span><span style="color:#81a1c1;">=$(</span><span>SOURCES:</span><span style="color:#81a1c1;">%</span><span>.Rmd=</span><span style="color:#81a1c1;">%</span><span>.pdf</span><span style="color:#81a1c1;">)
+</span><span>
+</span><span style="color:#88c0d0;">default</span><span style="color:#81a1c1;">: $(</span><span>TARGETS</span><span style="color:#81a1c1;">)
+</span><span>
+</span><span style="color:#616e88;"># type `make clean` to delete all of the target PDFs
+</span><span style="color:#88c0d0;">clean</span><span style="color:#81a1c1;">:
+</span><span>	</span><span style="color:#88c0d0;">rm</span><span> -rf </span><span style="color:#81a1c1;">$(</span><span>TARGETS</span><span style="color:#81a1c1;">)
+</span></code></pre>
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr />
+      (c) 2011-2025 Austin G. Davis-Richardson
+      <br />
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      <br />
+    </span>
+  </div>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+</body>
+
+</html>

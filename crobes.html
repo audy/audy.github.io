@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: black;
+  }
+  .emoji {
+    position: absolute;
+    font-size: 24px;
+  }
+</style>
+<title>Microbe Radio</title>
+</head>
+<body>
+
+<audio id="audio" controls style="z-index: 9999;">
+  <source src="http://45.55.10.220:20300/radio" type="audio/mpeg" crossorigin="anonymous">
+  Your browser does not support the audio element.
+</audio>
+
+<script>
+const emojis = ['🦠'];
+const emojiContainer = document.createElement('div');
+emojiContainer.className = 'emoji-container';
+document.body.appendChild(emojiContainer);
+
+function createEmoji() {
+  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const startX = Math.random() * window.innerWidth;
+  const startY = -30;
+  const speed = Math.random() * 2 + 1;
+  
+  const emojiElement = document.createElement('div');
+  emojiElement.textContent = emoji;
+  emojiElement.className = 'emoji';
+  emojiElement.style.left = startX + 'px';
+  emojiContainer.appendChild(emojiElement);
+
+  let posY = startY;
+
+  function updatePosition() {
+    posY += speed;
+    emojiElement.style.transform = `translate(${startX}px, ${posY}px)`;
+    
+    if (posY > window.innerHeight) {
+      emojiContainer.removeChild(emojiElement);
+    } else {
+      requestAnimationFrame(updatePosition);
+    }
+  }
+
+  requestAnimationFrame(updatePosition);
+}
+
+setInterval(createEmoji, 100);
+</script>
+</body>
+</html>
