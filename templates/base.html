@@ -214,9 +214,20 @@
 </head>
 
 <body>
-  <div id="header">
-    <h1>
-      <a href="/">agdr.org</a>
+  <div id="header" style="display:flex;align-items:center;gap:12px">
+    <svg id="cell-spinner" width="62" height="62" viewBox="0 0 200 200" aria-label="Cell division" style="display:block;cursor:pointer;flex-shrink:0" title="click to keep dividing">
+      <defs>
+        <clipPath id="dish-clip">
+          <circle cx="100" cy="100" r="79" />
+        </clipPath>
+      </defs>
+      <g clip-path="url(#dish-clip)">
+        <rect class="bg" x="0" y="0" width="200" height="200" fill="#3B4252" />
+        <g class="cells" fill="#ECEFF4"></g>
+      </g>
+    </svg>
+    <h1 style="margin:0">
+      <a href="/">Austin Davis-Richardson, PhD</a>
     </h1>
   </div>
   <hr />
@@ -235,6 +246,208 @@
       <br />
     </span>
   </div>
+
+  <script>
+  (function () {
+    const TWEAKS = {
+      HALF: 3.0, CELL_RX: 13, CELL_RY: 11, CELL_TILT: 12,
+      DIVIDE_BASE: 0.42, DIVIDE_JITTER: 0.35, SPLIT_SPEED: 20,
+      REPULSION_K: 900, SMOOSH: 0.68, CENTER_K: 100, DAMP_RATE: 14,
+      INFLATE_SPAN: 0.6, INFLATE_AMOUNT: 1.4, SEED: 605,
+    };
+
+    const DT = 1 / 120;
+    const STOP_DIVIDE_MARGIN = 0.35;
+    const MAX = 256;
+    const CENTER_X = 100, CENTER_Y = 100;
+    const CELL_COLOR = '#ECEFF4';
+    const BG_COLOR = '#3B4252';
+
+    const svg = document.getElementById('cell-spinner');
+    const cellsG = svg.querySelector('g.cells');
+    const bg = svg.querySelector('rect.bg');
+
+    const ellipses = [];
+    for (let i = 0; i < MAX; i++) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      cellsG.appendChild(el);
+      ellipses.push(el);
+    }
+
+    let rngState = TWEAKS.SEED;
+    function rand() {
+      let t = rngState += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+    function resetRng(s) { rngState = s; }
+
+    let nextCellId = 0;
+    function makeCell(x, y, gen, t) {
+      const jitter = 1 + (rand() - 0.5) * 2 * TWEAKS.DIVIDE_JITTER;
+      return {
+        id: nextCellId++, x, y, vx: 0, vy: 0, ax: 0, ay: 0, gen,
+        rx: TWEAKS.CELL_RX, ry: TWEAKS.CELL_RY,
+        rot: (rand() - 0.5) * 60,
+        nextDivide: t + TWEAKS.DIVIDE_BASE * jitter,
+      };
+    }
+
+    function stepPhysics(cells, dt) {
+      for (const c of cells) { c.ax = 0; c.ay = 0; }
+      for (let i = 0; i < cells.length; i++) {
+        const ci = cells[i];
+        const ri = (ci.rx + ci.ry) * 0.5;
+        for (let j = i + 1; j < cells.length; j++) {
+          const cj = cells[j];
+          const dx = cj.x - ci.x, dy = cj.y - ci.y;
+          const d2 = dx * dx + dy * dy;
+          const rj = (cj.rx + cj.ry) * 0.5;
+          const target = (ri + rj) * TWEAKS.SMOOSH;
+          if (d2 < target * target && d2 > 0.001) {
+            const d = Math.sqrt(d2);
+            const overlap = target - d;
+            const f = overlap * TWEAKS.REPULSION_K;
+            const nx = dx / d, ny = dy / d;
+            ci.ax -= nx * f; ci.ay -= ny * f;
+            cj.ax += nx * f; cj.ay += ny * f;
+          }
+        }
+      }
+      for (const c of cells) {
+        const dx = CENTER_X - c.x, dy = CENTER_Y - c.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > 0.5) {
+          const d = Math.sqrt(d2);
+          c.ax += (dx / d) * TWEAKS.CENTER_K;
+          c.ay += (dy / d) * TWEAKS.CENTER_K;
+        }
+      }
+      const damp = Math.exp(-TWEAKS.DAMP_RATE * dt);
+      for (const c of cells) {
+        c.vx += c.ax * dt; c.vy += c.ay * dt;
+        c.vx *= damp; c.vy *= damp;
+        c.x += c.vx * dt; c.y += c.vy * dt;
+      }
+    }
+
+    let SIM = { frames: [], dt: DT, count: 0 };
+    function precompute() {
+      resetRng(TWEAKS.SEED);
+      nextCellId = 0;
+      const HALF = TWEAKS.HALF;
+      const STOP_DIVIDE_AT = HALF - STOP_DIVIDE_MARGIN;
+      let cells = [makeCell(CENTER_X, CENTER_Y, 0, 0)];
+      cells[0].nextDivide = 0.30;
+      const frames = [];
+      let t = 0;
+      while (t < HALF) {
+        const next = [];
+        for (const c of cells) {
+          if (t >= c.nextDivide) {
+            const longAxisRad = (c.rot * Math.PI) / 180;
+            const perpendicular = rand() < 0.2;
+            let angle = longAxisRad + (perpendicular ? Math.PI / 2 : 0) + (rand() - 0.5) * 0.52;
+            if (rand() < 0.5) angle += Math.PI;
+            const ax = Math.cos(angle), ay = Math.sin(angle);
+            const offset = (c.rx + c.ry) * 0.4;
+            const d1 = makeCell(c.x - ax * offset, c.y - ay * offset, c.gen + 1, t);
+            const d2 = makeCell(c.x + ax * offset, c.y + ay * offset, c.gen + 1, t);
+            d1.vx = -ax * TWEAKS.SPLIT_SPEED + c.vx; d1.vy = -ay * TWEAKS.SPLIT_SPEED + c.vy;
+            d2.vx =  ax * TWEAKS.SPLIT_SPEED + c.vx; d2.vy =  ay * TWEAKS.SPLIT_SPEED + c.vy;
+            if (d1.nextDivide > STOP_DIVIDE_AT) d1.nextDivide = Infinity;
+            if (d2.nextDivide > STOP_DIVIDE_AT) d2.nextDivide = Infinity;
+            next.push(d1, d2);
+          } else {
+            next.push(c);
+          }
+        }
+        cells = next;
+        if (cells.length > MAX) cells.length = MAX;
+        stepPhysics(cells, DT);
+        frames.push(cells.map(c => ({ cx: c.x, cy: c.y, rx: c.rx, ry: c.ry, rot: c.rot })));
+        t += DT;
+      }
+      SIM = { frames, dt: DT, count: frames.length };
+    }
+
+    function cellsAt(localT) {
+      const idx = Math.min(SIM.count - 1, Math.max(0, Math.floor(localT / SIM.dt)));
+      const baseCells = SIM.frames[idx];
+      const remaining = TWEAKS.HALF - localT;
+      if (remaining > TWEAKS.INFLATE_SPAN) return baseCells;
+      const p = Math.max(0, Math.min(1, 1 - remaining / TWEAKS.INFLATE_SPAN));
+      const scale = 1 + (TWEAKS.INFLATE_AMOUNT - 1) * p;
+      return baseCells.map(c => ({ cx: c.cx, cy: c.cy, rx: c.rx * scale, ry: c.ry * scale, rot: c.rot }));
+    }
+
+    function render(cells, cellColor, bgColor) {
+      bg.setAttribute('fill', bgColor);
+      cellsG.setAttribute('fill', cellColor);
+      for (let i = 0; i < MAX; i++) {
+        const el = ellipses[i];
+        if (i < cells.length) {
+          const c = cells[i];
+          el.setAttribute('cx', c.cx.toFixed(2));
+          el.setAttribute('cy', c.cy.toFixed(2));
+          el.setAttribute('rx', Math.max(0, c.rx).toFixed(2));
+          el.setAttribute('ry', Math.max(0, c.ry).toFixed(2));
+          const rot = (c.rot || 0) + TWEAKS.CELL_TILT;
+          el.setAttribute('transform', `rotate(${rot.toFixed(2)} ${c.cx.toFixed(2)} ${c.cy.toFixed(2)})`);
+        } else {
+          el.setAttribute('rx', '0');
+          el.setAttribute('ry', '0');
+          el.removeAttribute('transform');
+        }
+      }
+    }
+
+    const FULL = TWEAKS.HALF * 2;
+    let absoluteT = 0;
+    let stopAtT = TWEAKS.HALF / 2;
+    let phase = 'playing';
+    let lastTs = null;
+
+    function renderAt(t) {
+      const loopT = t % FULL;
+      const inSecond = loopT >= TWEAKS.HALF;
+      const localT = loopT - (inSecond ? TWEAKS.HALF : 0);
+      if (inSecond) render(cellsAt(localT), BG_COLOR, CELL_COLOR);
+      else render(cellsAt(localT), CELL_COLOR, BG_COLOR);
+    }
+
+    function frame(ts) {
+      if (phase !== 'playing') return;
+      if (lastTs == null) lastTs = ts;
+      const dt = (ts - lastTs) / 1000;
+      lastTs = ts;
+      absoluteT += dt;
+      if (absoluteT >= stopAtT) {
+        absoluteT = stopAtT;
+        renderAt(absoluteT);
+        phase = 'paused';
+        lastTs = null;
+        return;
+      }
+      renderAt(absoluteT);
+      requestAnimationFrame(frame);
+    }
+
+    svg.addEventListener('click', () => {
+      if (phase === 'paused') {
+        stopAtT = absoluteT + TWEAKS.HALF;
+        phase = 'playing';
+        lastTs = null;
+        requestAnimationFrame(frame);
+      }
+    });
+
+    TWEAKS.SEED = Math.floor(Math.random() * 100000);
+    precompute();
+    requestAnimationFrame(frame);
+  })();
+  </script>
 
   <script type="text/javascript">
     // JavaScript function to create the email address dynamically
