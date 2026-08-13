@@ -9,15 +9,6 @@
   </ul>
 </div>
 
-<div id="links">
-  <h2>Links</h2>
-  <ul class="no-dots">
-    <li><a href="https://scholar.google.com/citations?hl=en&user=xw0mHYEAAAAJ&view_op=list_works&sortby=pubdate">Publications</a></li>
-    <li><a href="https://github.com/audy/">GitHub</a></li>
-    <li><a rel="me" href="https://bsky.app/profile/agdr.org">Bluesky</a></li>
-  </ul>
-</div>
-
 <div id="table-of-contents">
   {% for p in section.subsections %}
     {% set subsection = get_section(path=p) %}
@@ -27,7 +18,7 @@
         {% if not page.extra.hide %}
           <li>
             <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
-            <span class="dimmed">{{ page.date }}</span>
+            <span class="dimmed">{{ page.date | date(format="%B, %Y") }}</span>
           </li>
         {% endif %}
       {% endfor %}
@@ -35,6 +26,14 @@
   {% endfor %}
 </div>
 
+<div id="links">
+  <h2>Links</h2>
+  <ul class="no-dots">
+    <li><a href="https://scholar.google.com/citations?hl=en&user=xw0mHYEAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noopener">Publications</a></li>
+    <li><a href="https://github.com/audy/" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a rel="me noopener" href="https://bsky.app/profile/agdr.org" target="_blank">Bluesky</a></li>
+  </ul>
+</div>
 
 <div id="work">
   <h2>Work</h2>

@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<h2 class="title">
+<h1 class="title">
   {{ page.title }}
-</h2>
+</h1>
 
-<p class="subtitle dimmed">{{ page.date }}</p>
+<p class="subtitle dimmed">{{ page.date | date(format="%B, %Y") }}</p>
 
 {{ page.content | safe }}
 

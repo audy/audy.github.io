@@ -39,9 +39,9 @@
       /* purple */
 
       --link-color: var(--nord8);
-      --text-color: var(--nord4);
-      --bg-color: var(--nord1);
-      --dimmed: var(--nord4);
+      --text-color: #C7CEDB;
+      --bg-color: var(--nord0);
+      --dimmed: #616E88;
     }
 
     /* Base layout */
@@ -51,6 +51,7 @@
       background: var(--bg-color);
       color: var(--text-color);
       font-family: "Consolas", monospace;
+      line-height: 1.6;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -68,6 +69,7 @@
       padding: 2px 4px;
       background-color: var(--nord2);
       color: var(--nord13);
+      font-family: "Consolas", ui-monospace, Menlo, monospace;
       font-style: normal;
     }
 
@@ -76,10 +78,24 @@
       color: var(--link-color);
       font-weight: bold;
       text-decoration: none;
+      text-decoration-color: var(--nord13);
     }
 
     a:hover {
       text-decoration: underline;
+    }
+
+    /* Site title (name) */
+    #header h1 a {
+      color: var(--nord14);
+    }
+
+    /* External-link indicator */
+    #links li::after {
+      content: "\2197";
+      font-size: 0.8em;
+      margin-left: 0.15em;
+      color: var(--dimmed);
     }
 
     /* Horizontal rule */
@@ -94,37 +110,38 @@
     pre {
       padding: 12px;
       border-radius: 6px;
-      background: var(--nord1);
+      background: var(--nord1) !important;
       color: var(--nord6);
       font-family: "Consolas", monospace;
       overflow-x: auto;
       white-space: pre-wrap;
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      color: var(--nord6);
-    }
-
-    ;
+    h1 { color: var(--nord14); }  /* green */
+    h2 { color: var(--nord7); }   /* cyan */
+    h3 { color: var(--nord9); }   /* blue */
+    h4 { color: var(--nord15); }  /* purple */
+    h5 { color: var(--nord12); }  /* orange */
+    h6 { color: var(--nord11); }  /* red */
 
     /* Markdown-style heading prefixes */
     h1::before {
-      color: var(--nord15);
+      color: var(--nord14);
       content: "# ";
     }
 
+    /* Keep the site-title header clean (no prefix next to the logo) */
+    #header h1::before {
+      content: none;
+    }
+
     h2::before {
-      color: var(--nord15);
+      color: var(--nord7);
       content: "## ";
     }
 
     h3::before {
-      color: var(--nord15);
+      color: var(--nord9);
       content: "### ";
     }
 
@@ -134,12 +151,12 @@
     }
 
     h5::before {
-      color: var(--nord15);
+      color: var(--nord12);
       content: "##### ";
     }
 
     h6::before {
-      color: var(--nord15);
+      color: var(--nord11);
       content: "###### ";
     }
 
@@ -150,7 +167,7 @@
 
     ul li::before {
       content: "* ";
-      color: var(--nord15);
+      color: var(--nord14);
       margin-left: -1.2em;
     }
 
@@ -164,7 +181,7 @@
 
     ol li::before {
       content: counter(item) ". ";
-      color: var(--nord15);
+      color: var(--nord14);
       margin-left: -1.2em;
     }
 
@@ -223,7 +240,7 @@
       </defs>
       <g clip-path="url(#dish-clip)">
         <rect class="bg" x="0" y="0" width="200" height="200" fill="#3B4252" />
-        <g class="cells" fill="#ECEFF4"></g>
+        <g class="cells" fill="#A3BE8C"></g>
       </g>
     </svg>
     <h1 style="margin:0">
@@ -260,7 +277,7 @@
     const STOP_DIVIDE_MARGIN = 0.35;
     const MAX = 256;
     const CENTER_X = 100, CENTER_Y = 100;
-    const CELL_COLOR = '#ECEFF4';
+    const CELL_COLOR = '#A3BE8C';
     const BG_COLOR = '#3B4252';
 
     const svg = document.getElementById('cell-spinner');
