@@ -282,7 +282,9 @@
       <hr />
       (c) 2011-2026 Austin G. Davis-Richardson
       <br />
-      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>.
+      <br />
+      Colonies picked: <span id="n">#</span>
       <br />
     </span>
   </div>
@@ -501,6 +503,18 @@
     }
     generateEmail();
 
+  </script>
+
+
+  <script>
+    const KEY = "agdr_org_pokes_8f3a";  // make it unguessable
+    const hit = () => fetch(`https://countapi.mileshilliard.com/api/v1/hit/${KEY}`);
+    const get = () => fetch(`https://countapi.mileshilliard.com/api/v1/get/${KEY}`);
+
+    const show = r => r.json().then(d => n.textContent = d.value);
+    get().then(show);
+    const cells = document.getElementById('cell-spinner');
+    cells.onclick = () => hit().then(show);
   </script>
 
 </body>
