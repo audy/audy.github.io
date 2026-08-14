@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>agdr.org</title>
+
+  <style type="text/css">
+    :root {
+      --nord0: #2E3440;
+      /* darkest bg */
+      --nord1: #3B4252;
+      --nord2: #434C5E;
+      --nord3: #4C566A;
+      /* dim fg */
+      --nord4: #D8DEE9;
+      /* fg */
+      --nord5: #E5E9F0;
+      --nord6: #ECEFF4;
+      /* lightest */
+      --nord7: #8FBCBB;
+      /* cyan */
+      --nord8: #88C0D0;
+      /* light blue */
+      --nord9: #81A1C1;
+      /* blue */
+      --nord10: #5E81AC;
+      /* deep blue */
+      --nord11: #BF616A;
+      /* red */
+      --nord12: #D08770;
+      /* orange */
+      --nord13: #EBCB8B;
+      /* yellow */
+      --nord14: #A3BE8C;
+      /* green */
+      --nord15: #B48EAD;
+      /* purple */
+
+      --link-color: var(--nord13);
+      --text-color: #C7CEDB;
+      --bg-color: var(--nord0);
+      --dimmed: #616E88;
+    }
+
+    /* Base layout */
+    html,
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Consolas", monospace;
+      line-height: 1.6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 20px;
+      width: 800px;
+      display: block;
+    }
+
+    /* Inline code */
+    :not(pre)>code {
+      border-radius: 4px;
+      padding: 2px 4px;
+      background-color: var(--nord2);
+      color: var(--nord13);
+      font-family: "Consolas", ui-monospace, Menlo, monospace;
+      font-style: normal;
+    }
+
+    /* Links */
+    a {
+      color: inherit;
+      font-weight: bold;
+      text-decoration: underline;
+      text-decoration-color: var(--nord10);
+      text-underline-offset: 0.15rem;
+    }
+
+    a:hover {
+      text-decoration-color: var(--nord13);
+    }
+
+    /* Site title (name) */
+    #header h1 a {
+      color: var(--nord4);
+      text-decoration: none;
+      font-weight: normal;
+    }
+
+    /* External-link indicator */
+    #links li::after {
+      content: "\2197";
+      font-size: 0.8em;
+      margin-left: 0.15em;
+      color: var(--dimmed);
+    }
+
+    /* Horizontal rule */
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: var(--nord3);
+      margin: 1.5em 0;
+    }
+
+    /* Code blocks */
+    pre {
+      padding: 12px;
+      border-radius: 6px;
+      background: var(--nord1) !important;
+      color: var(--nord6);
+      font-family: "Consolas", monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    h1 {
+      color: var(--nord14);
+    }
+
+    h2 {
+      color: var(--nord7);
+    }
+
+    h3 {
+      color: var(--nord9);
+    }
+
+    h4 {
+      color: var(--nord15);
+    }
+
+    h5 {
+      color: var(--nord12);
+    }
+
+    h6 {
+      color: var(--nord11);
+    }
+
+    /* red */
+
+    /* Markdown-style heading prefixes */
+    h1::before {
+      color: var(--nord14);
+      content: "# ";
+    }
+
+    /* Keep the site-title header clean (no prefix next to the logo) */
+    #header h1::before {
+      content: none;
+    }
+
+    h2::before {
+      color: var(--nord7);
+      content: "## ";
+    }
+
+    h3::before {
+      color: var(--nord9);
+      content: "### ";
+    }
+
+    h4::before {
+      color: var(--nord15);
+      content: "#### ";
+    }
+
+    h5::before {
+      color: var(--nord12);
+      content: "##### ";
+    }
+
+    h6::before {
+      color: var(--nord11);
+      content: "###### ";
+    }
+
+    /* Lists */
+    li {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "* ";
+      color: var(--nord14);
+      margin-left: -1.2em;
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ". ";
+      color: var(--nord14);
+      margin-left: -1.2em;
+    }
+
+    blockquote {
+      color: var(--nord8);
+    }
+
+    /* Dimmed text */
+    .dimmed {
+      color: var(--dimmed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        font-size: 18px;
+      }
+
+      body {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      pre {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 1.2em;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header" style="display:flex;align-items:center;gap:12px">
+    <svg id="cell-spinner" width="62" height="62" viewBox="0 0 200 200" aria-label="Cell division"
+      style="display:block;cursor:pointer;flex-shrink:0" title="click to keep dividing">
+      <defs>
+        <clipPath id="dish-clip">
+          <circle cx="100" cy="100" r="79" />
+        </clipPath>
+      </defs>
+      <g clip-path="url(#dish-clip)">
+        <rect class="bg" x="0" y="0" width="200" height="200" fill="#3B4252" />
+        <g class="cells" fill="#A3BE8C"></g>
+      </g>
+    </svg>
+    <h1 style="margin:0">
+      <a href="/">agdr.org</a>
+    </h1>
+  </div>
+  <hr />
+
+  <div>
+    
+
+<div id="table-of-contents">
+  
+    
+    <h2>Posts</h2>
+    <ul class="no-dots blog-description">
+      
+        
+      
+        
+          <li>
+            <a href="https://agdr.org/blog/polyglot-makefiles/">Polyglot Makefiles</a>
+            <span class="dimmed">May, 2020</span>
+          </li>
+        
+      
+        
+      
+        
+      
+        
+          <li>
+            <a href="https://agdr.org/blog/rmarkdown-continuous-integration/">RMarkdown &amp; Continuous Integration</a>
+            <span class="dimmed">January, 2015</span>
+          </li>
+        
+      
+        
+          <li>
+            <a href="https://agdr.org/blog/rmarkdown-make/">RMarkdown + Make</a>
+            <span class="dimmed">December, 2014</span>
+          </li>
+        
+      
+        
+          <li>
+            <a href="https://agdr.org/blog/git-box/">Git Dropbox with Gitreceive</a>
+            <span class="dimmed">October, 2014</span>
+          </li>
+        
+      
+        
+          <li>
+            <a href="https://agdr.org/blog/compressive-sensing/">Compressive Sensing</a>
+            <span class="dimmed">May, 2011</span>
+          </li>
+        
+      
+        
+          <li>
+            <a href="https://agdr.org/blog/illumina/">Illumina Obscura</a>
+            <span class="dimmed">May, 2011</span>
+          </li>
+        
+      
+        
+      
+        
+      
+    </ul>
+  
+</div>
+
+<div id="links">
+  <h2>Links</h2>
+  <ul class="no-dots">
+    <li><a href="https://scholar.google.com/citations?hl=en&user=xw0mHYEAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noopener">Publications</a></li>
+    <li><a href="https://github.com/audy/" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a rel="me noopener" href="https://bsky.app/profile/agdr.org" target="_blank">Bluesky</a></li>
+  </ul>
+</div>
+
+<div id="about">
+  <h2>About</h2>
+  Austin G. Davis-Richardson, PhD &mdash;
+  Bioinformatics Engineer currently residing in Oakland, CA. Reach me at <a id="email-link" href=""></a>.
+</div>
+
+
+
+
+  </div>
+
+  <div>
+    <span class="dimmed">
+      <hr />
+      (c) 2011-2026 Austin G. Davis-Richardson
+      <br />
+      Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons By 4.0</a>.
+      <br />
+      Colonies picked: <span id="n">#</span>
+      <br />
+    </span>
+  </div>
+
+  <script>
+    (function () {
+      const TWEAKS = {
+        HALF: 3.0, CELL_RX: 13, CELL_RY: 11, CELL_TILT: 12,
+        DIVIDE_BASE: 0.42, DIVIDE_JITTER: 0.35, SPLIT_SPEED: 20,
+        REPULSION_K: 900, SMOOSH: 0.68, CENTER_K: 100, DAMP_RATE: 14,
+        INFLATE_SPAN: 0.6, INFLATE_AMOUNT: 1.4, SEED: 605,
+      };
+
+      const DT = 1 / 120;
+      const STOP_DIVIDE_MARGIN = 0.35;
+      const MAX = 256;
+      const CENTER_X = 100, CENTER_Y = 100;
+      const CELL_COLOR = '#A3BE8C';
+      const BG_COLOR = '#3B4252';
+
+      const svg = document.getElementById('cell-spinner');
+      const cellsG = svg.querySelector('g.cells');
+      const bg = svg.querySelector('rect.bg');
+
+      const ellipses = [];
+      for (let i = 0; i < MAX; i++) {
+        const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        cellsG.appendChild(el);
+        ellipses.push(el);
+      }
+
+      let rngState = TWEAKS.SEED;
+      function rand() {
+        let t = rngState += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+      function resetRng(s) {rngState = s;}
+
+      let nextCellId = 0;
+      function makeCell(x, y, gen, t) {
+        const jitter = 1 + (rand() - 0.5) * 2 * TWEAKS.DIVIDE_JITTER;
+        return {
+          id: nextCellId++, x, y, vx: 0, vy: 0, ax: 0, ay: 0, gen,
+          rx: TWEAKS.CELL_RX, ry: TWEAKS.CELL_RY,
+          rot: (rand() - 0.5) * 60,
+          nextDivide: t + TWEAKS.DIVIDE_BASE * jitter,
+        };
+      }
+
+      function stepPhysics(cells, dt) {
+        for (const c of cells) {c.ax = 0; c.ay = 0;}
+        for (let i = 0; i < cells.length; i++) {
+          const ci = cells[i];
+          const ri = (ci.rx + ci.ry) * 0.5;
+          for (let j = i + 1; j < cells.length; j++) {
+            const cj = cells[j];
+            const dx = cj.x - ci.x, dy = cj.y - ci.y;
+            const d2 = dx * dx + dy * dy;
+            const rj = (cj.rx + cj.ry) * 0.5;
+            const target = (ri + rj) * TWEAKS.SMOOSH;
+            if (d2 < target * target && d2 > 0.001) {
+              const d = Math.sqrt(d2);
+              const overlap = target - d;
+              const f = overlap * TWEAKS.REPULSION_K;
+              const nx = dx / d, ny = dy / d;
+              ci.ax -= nx * f; ci.ay -= ny * f;
+              cj.ax += nx * f; cj.ay += ny * f;
+            }
+          }
+        }
+        for (const c of cells) {
+          const dx = CENTER_X - c.x, dy = CENTER_Y - c.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > 0.5) {
+            const d = Math.sqrt(d2);
+            c.ax += (dx / d) * TWEAKS.CENTER_K;
+            c.ay += (dy / d) * TWEAKS.CENTER_K;
+          }
+        }
+        const damp = Math.exp(-TWEAKS.DAMP_RATE * dt);
+        for (const c of cells) {
+          c.vx += c.ax * dt; c.vy += c.ay * dt;
+          c.vx *= damp; c.vy *= damp;
+          c.x += c.vx * dt; c.y += c.vy * dt;
+        }
+      }
+
+      let SIM = {frames: [], dt: DT, count: 0};
+      function precompute() {
+        resetRng(TWEAKS.SEED);
+        nextCellId = 0;
+        const HALF = TWEAKS.HALF;
+        const STOP_DIVIDE_AT = HALF - STOP_DIVIDE_MARGIN;
+        let cells = [makeCell(CENTER_X, CENTER_Y, 0, 0)];
+        cells[0].nextDivide = 0.30;
+        const frames = [];
+        let t = 0;
+        while (t < HALF) {
+          const next = [];
+          for (const c of cells) {
+            if (t >= c.nextDivide) {
+              const longAxisRad = (c.rot * Math.PI) / 180;
+              const perpendicular = rand() < 0.2;
+              let angle = longAxisRad + (perpendicular ? Math.PI / 2 : 0) + (rand() - 0.5) * 0.52;
+              if (rand() < 0.5) angle += Math.PI;
+              const ax = Math.cos(angle), ay = Math.sin(angle);
+              const offset = (c.rx + c.ry) * 0.4;
+              const d1 = makeCell(c.x - ax * offset, c.y - ay * offset, c.gen + 1, t);
+              const d2 = makeCell(c.x + ax * offset, c.y + ay * offset, c.gen + 1, t);
+              d1.vx = -ax * TWEAKS.SPLIT_SPEED + c.vx; d1.vy = -ay * TWEAKS.SPLIT_SPEED + c.vy;
+              d2.vx = ax * TWEAKS.SPLIT_SPEED + c.vx; d2.vy = ay * TWEAKS.SPLIT_SPEED + c.vy;
+              if (d1.nextDivide > STOP_DIVIDE_AT) d1.nextDivide = Infinity;
+              if (d2.nextDivide > STOP_DIVIDE_AT) d2.nextDivide = Infinity;
+              next.push(d1, d2);
+            } else {
+              next.push(c);
+            }
+          }
+          cells = next;
+          if (cells.length > MAX) cells.length = MAX;
+          stepPhysics(cells, DT);
+          frames.push(cells.map(c => ({cx: c.x, cy: c.y, rx: c.rx, ry: c.ry, rot: c.rot})));
+          t += DT;
+        }
+        SIM = {frames, dt: DT, count: frames.length};
+      }
+
+      function cellsAt(localT) {
+        const idx = Math.min(SIM.count - 1, Math.max(0, Math.floor(localT / SIM.dt)));
+        const baseCells = SIM.frames[idx];
+        const remaining = TWEAKS.HALF - localT;
+        if (remaining > TWEAKS.INFLATE_SPAN) return baseCells;
+        const p = Math.max(0, Math.min(1, 1 - remaining / TWEAKS.INFLATE_SPAN));
+        const scale = 1 + (TWEAKS.INFLATE_AMOUNT - 1) * p;
+        return baseCells.map(c => ({cx: c.cx, cy: c.cy, rx: c.rx * scale, ry: c.ry * scale, rot: c.rot}));
+      }
+
+      function render(cells, cellColor, bgColor) {
+        bg.setAttribute('fill', bgColor);
+        cellsG.setAttribute('fill', cellColor);
+        for (let i = 0; i < MAX; i++) {
+          const el = ellipses[i];
+          if (i < cells.length) {
+            const c = cells[i];
+            el.setAttribute('cx', c.cx.toFixed(2));
+            el.setAttribute('cy', c.cy.toFixed(2));
+            el.setAttribute('rx', Math.max(0, c.rx).toFixed(2));
+            el.setAttribute('ry', Math.max(0, c.ry).toFixed(2));
+            const rot = (c.rot || 0) + TWEAKS.CELL_TILT;
+            el.setAttribute('transform', `rotate(${rot.toFixed(2)} ${c.cx.toFixed(2)} ${c.cy.toFixed(2)})`);
+          } else {
+            el.setAttribute('rx', '0');
+            el.setAttribute('ry', '0');
+            el.removeAttribute('transform');
+          }
+        }
+      }
+
+      const FULL = TWEAKS.HALF * 2;
+      let absoluteT = 0;
+      let stopAtT = TWEAKS.HALF / 2;
+      let phase = 'playing';
+      let lastTs = null;
+
+      function renderAt(t) {
+        const loopT = t % FULL;
+        const inSecond = loopT >= TWEAKS.HALF;
+        const localT = loopT - (inSecond ? TWEAKS.HALF : 0);
+        if (inSecond) render(cellsAt(localT), BG_COLOR, CELL_COLOR);
+        else render(cellsAt(localT), CELL_COLOR, BG_COLOR);
+      }
+
+      function frame(ts) {
+        if (phase !== 'playing') return;
+        if (lastTs == null) lastTs = ts;
+        const dt = (ts - lastTs) / 1000;
+        lastTs = ts;
+        absoluteT += dt;
+        if (absoluteT >= stopAtT) {
+          absoluteT = stopAtT;
+          renderAt(absoluteT);
+          phase = 'paused';
+          lastTs = null;
+          return;
+        }
+        renderAt(absoluteT);
+        requestAnimationFrame(frame);
+      }
+
+      svg.addEventListener('click', () => {
+        if (phase === 'paused') {
+          stopAtT = absoluteT + TWEAKS.HALF;
+          phase = 'playing';
+          lastTs = null;
+          requestAnimationFrame(frame);
+        }
+      });
+
+      TWEAKS.SEED = Math.floor(Math.random() * 100000);
+      precompute();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+
+  <script type="text/javascript">
+    // JavaScript function to create the email address dynamically
+    function generateEmail() {
+      var user = "hello";
+      var domain = "agdr.org";
+      var emailAddress = user + "@" + domain;
+      var emailElement = document.getElementById("email-link");
+      emailElement.innerHTML = emailAddress;
+      emailElement.href = "mailto:" + emailAddress;
+    }
+    generateEmail();
+
+  </script>
+
+
+  <script>
+    const KEY = "agdr_org_pokes_8f3a";  // make it unguessable
+    const hit = () => fetch(`https://countapi.mileshilliard.com/api/v1/hit/${KEY}`);
+    const get = () => fetch(`https://countapi.mileshilliard.com/api/v1/get/${KEY}`);
+
+    const show = r => r.json().then(d => n.textContent = d.value);
+    get().then(show);
+    const cells = document.getElementById('cell-spinner');
+    cells.onclick = () => hit().then(show);
+  </script>
+
+</body>
+
+</html>
